@@ -34,9 +34,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: isProd,       // HTTPS em produção, HTTP local
+    secure: false,        // Railway lida com HTTPS no proxy — cookie sem Secure funciona
     httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
+    sameSite: 'lax',
     maxAge: 24 * 60 * 60 * 1000 // 24h
   }
 }));
