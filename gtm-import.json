@@ -14,24 +14,6 @@
       "publicId": "GTM-545K26P6",
       "usageContext": ["WEB"]
     },
-    "builtInVariable": [
-      {"accountId": "6349826638", "containerId": "249370641", "type": "pageUrl",      "name": "Page URL"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "pageHostname", "name": "Page Hostname"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "pagePath",     "name": "Page Path"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "referrer",     "name": "Referrer"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "event",        "name": "Event"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "clickElement", "name": "Click Element"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "clickClasses", "name": "Click Classes"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "clickId",      "name": "Click ID"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "clickTarget",  "name": "Click Target"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "clickUrl",     "name": "Click URL"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "clickText",    "name": "Click Text"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "formElement",  "name": "Form Element"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "formClasses",  "name": "Form Classes"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "formId",       "name": "Form ID"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "formTarget",   "name": "Form Target"},
-      {"accountId": "6349826638", "containerId": "249370641", "type": "formUrl",      "name": "Form URL"}
-    ],
     "variable": [
       {
         "accountId": "6349826638",
@@ -40,286 +22,154 @@
         "name": "GA4 - Measurement ID",
         "type": "c",
         "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "value",
-            "value": "COLE_SEU_G-XXXXXXXXXX_AQUI"
-          }
+          {"type": "TEMPLATE", "key": "value", "value": "COLE_SEU_G-XXXXXXXXXX_AQUI"}
         ]
       }
     ],
     "trigger": [
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "triggerId": "10",
-        "name": "Todas as Páginas",
-        "type": "PAGEVIEW"
+        "accountId": "6349826638", "containerId": "249370641", "triggerId": "10",
+        "name": "Todas as Páginas", "type": "PAGEVIEW"
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "triggerId": "11",
-        "name": "Clique - Contribuir Mercado Pago",
-        "type": "LINK_CLICK",
+        "accountId": "6349826638", "containerId": "249370641", "triggerId": "11",
+        "name": "Clique - Contribuir Mercado Pago", "type": "LINK_CLICK",
         "parameter": [
           {"type": "BOOLEAN",  "key": "waitForTags",        "value": "true"},
           {"type": "BOOLEAN",  "key": "checkValidation",    "value": "false"},
           {"type": "TEMPLATE", "key": "waitForTagsTimeout", "value": "2000"}
         ],
-        "filter": [
-          {
-            "type": "CONTAINS",
-            "parameter": [
-              {"type": "TEMPLATE", "key": "arg0", "value": "{{Click URL}}"},
-              {"type": "TEMPLATE", "key": "arg1", "value": "mercadopago"}
-            ]
-          }
-        ]
+        "filter": [{"type": "CONTAINS", "parameter": [
+          {"type": "TEMPLATE", "key": "arg0", "value": "{{Click URL}}"},
+          {"type": "TEMPLATE", "key": "arg1", "value": "mercadopago"}
+        ]}]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "triggerId": "12",
-        "name": "Formulário - Sorteio Reserva",
-        "type": "FORM_SUBMISSION",
+        "accountId": "6349826638", "containerId": "249370641", "triggerId": "12",
+        "name": "Formulário - Sorteio Reserva", "type": "FORM_SUBMISSION",
         "parameter": [
           {"type": "BOOLEAN", "key": "waitForTags",     "value": "true"},
           {"type": "BOOLEAN", "key": "checkValidation", "value": "false"}
         ],
-        "filter": [
-          {
-            "type": "EQUALS",
-            "parameter": [
-              {"type": "TEMPLATE", "key": "arg0", "value": "{{Form ID}}"},
-              {"type": "TEMPLATE", "key": "arg1", "value": "raffleForm"}
-            ]
-          }
-        ]
+        "filter": [{"type": "EQUALS", "parameter": [
+          {"type": "TEMPLATE", "key": "arg0", "value": "{{Form ID}}"},
+          {"type": "TEMPLATE", "key": "arg1", "value": "raffleForm"}
+        ]}]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "triggerId": "13",
-        "name": "Formulário - Comprovante Enviado",
-        "type": "FORM_SUBMISSION",
+        "accountId": "6349826638", "containerId": "249370641", "triggerId": "13",
+        "name": "Formulário - Comprovante Enviado", "type": "FORM_SUBMISSION",
         "parameter": [
           {"type": "BOOLEAN", "key": "waitForTags",     "value": "true"},
           {"type": "BOOLEAN", "key": "checkValidation", "value": "false"}
         ],
-        "filter": [
-          {
-            "type": "EQUALS",
-            "parameter": [
-              {"type": "TEMPLATE", "key": "arg0", "value": "{{Form ID}}"},
-              {"type": "TEMPLATE", "key": "arg1", "value": "receiptForm"}
-            ]
-          }
-        ]
+        "filter": [{"type": "EQUALS", "parameter": [
+          {"type": "TEMPLATE", "key": "arg0", "value": "{{Form ID}}"},
+          {"type": "TEMPLATE", "key": "arg1", "value": "receiptForm"}
+        ]}]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "triggerId": "14",
-        "name": "Página - Obrigado",
-        "type": "PAGEVIEW",
-        "filter": [
-          {
-            "type": "EQUALS",
-            "parameter": [
-              {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
-              {"type": "TEMPLATE", "key": "arg1", "value": "/obrigado"}
-            ]
-          }
-        ]
+        "accountId": "6349826638", "containerId": "249370641", "triggerId": "14",
+        "name": "Página - Obrigado", "type": "PAGEVIEW",
+        "filter": [{"type": "EQUALS", "parameter": [
+          {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
+          {"type": "TEMPLATE", "key": "arg1", "value": "/obrigado"}
+        ]}]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "triggerId": "15",
-        "name": "Clique - Card de Presente",
-        "type": "CLICK",
-        "parameter": [
-          {"type": "BOOLEAN", "key": "waitForTags", "value": "false"}
-        ],
-        "filter": [
-          {
-            "type": "CONTAINS",
-            "parameter": [
-              {"type": "TEMPLATE", "key": "arg0", "value": "{{Click Classes}}"},
-              {"type": "TEMPLATE", "key": "arg1", "value": "product-card-link"}
-            ]
-          }
-        ]
+        "accountId": "6349826638", "containerId": "249370641", "triggerId": "15",
+        "name": "Clique - Card de Presente", "type": "CLICK",
+        "parameter": [{"type": "BOOLEAN", "key": "waitForTags", "value": "false"}],
+        "filter": [{"type": "CONTAINS", "parameter": [
+          {"type": "TEMPLATE", "key": "arg0", "value": "{{Click Classes}}"},
+          {"type": "TEMPLATE", "key": "arg1", "value": "product-card-link"}
+        ]}]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "triggerId": "16",
-        "name": "Página - Sorteio",
-        "type": "PAGEVIEW",
-        "filter": [
-          {
-            "type": "EQUALS",
-            "parameter": [
-              {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
-              {"type": "TEMPLATE", "key": "arg1", "value": "/sorteio"}
-            ]
-          }
-        ]
+        "accountId": "6349826638", "containerId": "249370641", "triggerId": "16",
+        "name": "Página - Sorteio", "type": "PAGEVIEW",
+        "filter": [{"type": "EQUALS", "parameter": [
+          {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
+          {"type": "TEMPLATE", "key": "arg1", "value": "/sorteio"}
+        ]}]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "triggerId": "17",
-        "name": "Página - Meta",
-        "type": "PAGEVIEW",
-        "filter": [
-          {
-            "type": "EQUALS",
-            "parameter": [
-              {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
-              {"type": "TEMPLATE", "key": "arg1", "value": "/meta"}
-            ]
-          }
-        ]
+        "accountId": "6349826638", "containerId": "249370641", "triggerId": "17",
+        "name": "Página - Meta", "type": "PAGEVIEW",
+        "filter": [{"type": "EQUALS", "parameter": [
+          {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
+          {"type": "TEMPLATE", "key": "arg1", "value": "/meta"}
+        ]}]
       }
     ],
     "tag": [
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "tagId": "1",
-        "name": "GA4 - Configuração Base",
-        "type": "googtag",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "tagId",
-            "value": "{{GA4 - Measurement ID}}"
-          }
-        ],
+        "accountId": "6349826638", "containerId": "249370641", "tagId": "1",
+        "name": "GA4 - Configuração Base", "type": "googtag",
+        "parameter": [{"type": "TEMPLATE", "key": "tagId", "value": "{{GA4 - Measurement ID}}"}],
         "firingTriggerId": ["10"]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "tagId": "2",
-        "name": "GA4 - Evento Clique Contribuição",
-        "type": "gaawe",
+        "accountId": "6349826638", "containerId": "249370641", "tagId": "2",
+        "name": "GA4 - Evento Clique Contribuição", "type": "gaawe",
         "parameter": [
           {"type": "TEMPLATE", "key": "eventName", "value": "clique_contribuicao"},
-          {
-            "type": "LIST",
-            "key": "eventParameters",
-            "list": [
-              {"type": "MAP", "map": [
-                {"type": "TEMPLATE", "key": "name",  "value": "pagina_origem"},
-                {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}
-              ]},
-              {"type": "MAP", "map": [
-                {"type": "TEMPLATE", "key": "name",  "value": "destino_url"},
-                {"type": "TEMPLATE", "key": "value", "value": "{{Click URL}}"}
-              ]}
-            ]
-          }
+          {"type": "LIST", "key": "eventParameters", "list": [
+            {"type": "MAP", "map": [{"type": "TEMPLATE", "key": "name", "value": "pagina_origem"}, {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}]},
+            {"type": "MAP", "map": [{"type": "TEMPLATE", "key": "name", "value": "destino_url"},   {"type": "TEMPLATE", "key": "value", "value": "{{Click URL}}"}]}
+          ]}
         ],
         "firingTriggerId": ["11"]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "tagId": "3",
-        "name": "GA4 - Evento Reserva Sorteio",
-        "type": "gaawe",
+        "accountId": "6349826638", "containerId": "249370641", "tagId": "3",
+        "name": "GA4 - Evento Reserva Sorteio", "type": "gaawe",
         "parameter": [
           {"type": "TEMPLATE", "key": "eventName", "value": "reserva_sorteio"},
-          {
-            "type": "LIST",
-            "key": "eventParameters",
-            "list": [
-              {"type": "MAP", "map": [
-                {"type": "TEMPLATE", "key": "name",  "value": "pagina_origem"},
-                {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}
-              ]}
-            ]
-          }
+          {"type": "LIST", "key": "eventParameters", "list": [
+            {"type": "MAP", "map": [{"type": "TEMPLATE", "key": "name", "value": "pagina_origem"}, {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}]}
+          ]}
         ],
         "firingTriggerId": ["12"]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "tagId": "4",
-        "name": "GA4 - Evento Comprovante Enviado",
-        "type": "gaawe",
+        "accountId": "6349826638", "containerId": "249370641", "tagId": "4",
+        "name": "GA4 - Evento Comprovante Enviado", "type": "gaawe",
         "parameter": [
           {"type": "TEMPLATE", "key": "eventName", "value": "comprovante_enviado"},
-          {
-            "type": "LIST",
-            "key": "eventParameters",
-            "list": [
-              {"type": "MAP", "map": [
-                {"type": "TEMPLATE", "key": "name",  "value": "presente_url"},
-                {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}
-              ]}
-            ]
-          }
+          {"type": "LIST", "key": "eventParameters", "list": [
+            {"type": "MAP", "map": [{"type": "TEMPLATE", "key": "name", "value": "presente_url"}, {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}]}
+          ]}
         ],
         "firingTriggerId": ["13"]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "tagId": "5",
-        "name": "GA4 - Evento Conversão Concluída",
-        "type": "gaawe",
-        "parameter": [
-          {"type": "TEMPLATE", "key": "eventName", "value": "conversao_concluida"}
-        ],
+        "accountId": "6349826638", "containerId": "249370641", "tagId": "5",
+        "name": "GA4 - Evento Conversão Concluída", "type": "gaawe",
+        "parameter": [{"type": "TEMPLATE", "key": "eventName", "value": "conversao_concluida"}],
         "firingTriggerId": ["14"]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "tagId": "6",
-        "name": "GA4 - Evento Ver Presente",
-        "type": "gaawe",
+        "accountId": "6349826638", "containerId": "249370641", "tagId": "6",
+        "name": "GA4 - Evento Ver Presente", "type": "gaawe",
         "parameter": [
           {"type": "TEMPLATE", "key": "eventName", "value": "ver_presente"},
-          {
-            "type": "LIST",
-            "key": "eventParameters",
-            "list": [
-              {"type": "MAP", "map": [
-                {"type": "TEMPLATE", "key": "name",  "value": "url_presente"},
-                {"type": "TEMPLATE", "key": "value", "value": "{{Click URL}}"}
-              ]}
-            ]
-          }
+          {"type": "LIST", "key": "eventParameters", "list": [
+            {"type": "MAP", "map": [{"type": "TEMPLATE", "key": "name", "value": "url_presente"}, {"type": "TEMPLATE", "key": "value", "value": "{{Click URL}}"}]}
+          ]}
         ],
         "firingTriggerId": ["15"]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "tagId": "7",
-        "name": "GA4 - Pageview Sorteio",
-        "type": "gaawe",
-        "parameter": [
-          {"type": "TEMPLATE", "key": "eventName", "value": "view_sorteio"}
-        ],
+        "accountId": "6349826638", "containerId": "249370641", "tagId": "7",
+        "name": "GA4 - Pageview Sorteio", "type": "gaawe",
+        "parameter": [{"type": "TEMPLATE", "key": "eventName", "value": "view_sorteio"}],
         "firingTriggerId": ["16"]
       },
       {
-        "accountId": "6349826638",
-        "containerId": "249370641",
-        "tagId": "8",
-        "name": "GA4 - Pageview Meta",
-        "type": "gaawe",
-        "parameter": [
-          {"type": "TEMPLATE", "key": "eventName", "value": "view_meta"}
-        ],
+        "accountId": "6349826638", "containerId": "249370641", "tagId": "8",
+        "name": "GA4 - Pageview Meta", "type": "gaawe",
+        "parameter": [{"type": "TEMPLATE", "key": "eventName", "value": "view_meta"}],
         "firingTriggerId": ["17"]
       }
     ]
