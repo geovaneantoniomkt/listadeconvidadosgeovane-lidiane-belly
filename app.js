@@ -11,6 +11,10 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProd = process.env.NODE_ENV === 'production';
+
+// Necessário para Railway/Render/Heroku — confiar no proxy reverso
+app.set('trust proxy', 1);
 
 // ────────────────────────────────────────────────
 // VIEW ENGINE
@@ -29,7 +33,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'casa-nova-segredo-2024',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24h
+  cookie: {
+    secure: isProd,       // HTTPS em produção, HTTP local
+    httpOnly: true,
+    sameSite: isProd ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 24h
+  }
 }));
 
 app.use(flash());
