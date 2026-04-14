@@ -42,7 +42,7 @@
         "type": "c",
         "parameter": [
           {
-            "type": "template",
+            "type": "TEMPLATE",
             "key": "value",
             "value": "COLE_SEU_G-XXXXXXXXXX_AQUI"
           }
@@ -64,16 +64,16 @@
         "name": "Clique - Contribuir Mercado Pago",
         "type": "LINK_CLICK",
         "parameter": [
-          {"type": "boolean", "key": "waitForTags",        "value": "true"},
-          {"type": "boolean", "key": "checkValidation",    "value": "false"},
-          {"type": "template","key": "waitForTagsTimeout", "value": "2000"}
+          {"type": "BOOLEAN",  "key": "waitForTags",        "value": "true"},
+          {"type": "BOOLEAN",  "key": "checkValidation",    "value": "false"},
+          {"type": "TEMPLATE", "key": "waitForTagsTimeout", "value": "2000"}
         ],
         "filter": [
           {
             "type": "CONTAINS",
             "parameter": [
-              {"type": "template", "key": "arg0", "value": "{{Click URL}}"},
-              {"type": "template", "key": "arg1", "value": "mercadopago"}
+              {"type": "TEMPLATE", "key": "arg0", "value": "{{Click URL}}"},
+              {"type": "TEMPLATE", "key": "arg1", "value": "mercadopago"}
             ]
           }
         ]
@@ -85,16 +85,15 @@
         "name": "Formulário - Sorteio Reserva",
         "type": "FORM_SUBMISSION",
         "parameter": [
-          {"type": "boolean", "key": "waitForTags",     "value": "true"},
-          {"type": "boolean", "key": "checkValidation", "value": "false"},
-          {"type": "boolean", "key": "uniqueTriggerId", "value": "false"}
+          {"type": "BOOLEAN", "key": "waitForTags",     "value": "true"},
+          {"type": "BOOLEAN", "key": "checkValidation", "value": "false"}
         ],
         "filter": [
           {
             "type": "EQUALS",
             "parameter": [
-              {"type": "template", "key": "arg0", "value": "{{Form ID}}"},
-              {"type": "template", "key": "arg1", "value": "raffleForm"}
+              {"type": "TEMPLATE", "key": "arg0", "value": "{{Form ID}}"},
+              {"type": "TEMPLATE", "key": "arg1", "value": "raffleForm"}
             ]
           }
         ]
@@ -106,16 +105,15 @@
         "name": "Formulário - Comprovante Enviado",
         "type": "FORM_SUBMISSION",
         "parameter": [
-          {"type": "boolean", "key": "waitForTags",     "value": "true"},
-          {"type": "boolean", "key": "checkValidation", "value": "false"},
-          {"type": "boolean", "key": "uniqueTriggerId", "value": "false"}
+          {"type": "BOOLEAN", "key": "waitForTags",     "value": "true"},
+          {"type": "BOOLEAN", "key": "checkValidation", "value": "false"}
         ],
         "filter": [
           {
             "type": "EQUALS",
             "parameter": [
-              {"type": "template", "key": "arg0", "value": "{{Form ID}}"},
-              {"type": "template", "key": "arg1", "value": "receiptForm"}
+              {"type": "TEMPLATE", "key": "arg0", "value": "{{Form ID}}"},
+              {"type": "TEMPLATE", "key": "arg1", "value": "receiptForm"}
             ]
           }
         ]
@@ -130,8 +128,8 @@
           {
             "type": "EQUALS",
             "parameter": [
-              {"type": "template", "key": "arg0", "value": "{{Page Path}}"},
-              {"type": "template", "key": "arg1", "value": "/obrigado"}
+              {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
+              {"type": "TEMPLATE", "key": "arg1", "value": "/obrigado"}
             ]
           }
         ]
@@ -143,14 +141,14 @@
         "name": "Clique - Card de Presente",
         "type": "CLICK",
         "parameter": [
-          {"type": "boolean", "key": "waitForTags", "value": "false"}
+          {"type": "BOOLEAN", "key": "waitForTags", "value": "false"}
         ],
         "filter": [
           {
             "type": "CONTAINS",
             "parameter": [
-              {"type": "template", "key": "arg0", "value": "{{Click Classes}}"},
-              {"type": "template", "key": "arg1", "value": "product-card-link"}
+              {"type": "TEMPLATE", "key": "arg0", "value": "{{Click Classes}}"},
+              {"type": "TEMPLATE", "key": "arg1", "value": "product-card-link"}
             ]
           }
         ]
@@ -165,8 +163,8 @@
           {
             "type": "EQUALS",
             "parameter": [
-              {"type": "template", "key": "arg0", "value": "{{Page Path}}"},
-              {"type": "template", "key": "arg1", "value": "/sorteio"}
+              {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
+              {"type": "TEMPLATE", "key": "arg1", "value": "/sorteio"}
             ]
           }
         ]
@@ -181,8 +179,8 @@
           {
             "type": "EQUALS",
             "parameter": [
-              {"type": "template", "key": "arg0", "value": "{{Page Path}}"},
-              {"type": "template", "key": "arg1", "value": "/meta"}
+              {"type": "TEMPLATE", "key": "arg0", "value": "{{Page Path}}"},
+              {"type": "TEMPLATE", "key": "arg1", "value": "/meta"}
             ]
           }
         ]
@@ -197,7 +195,7 @@
         "type": "googtag",
         "parameter": [
           {
-            "type": "template",
+            "type": "TEMPLATE",
             "key": "tagId",
             "value": "{{GA4 - Measurement ID}}"
           }
@@ -211,29 +209,19 @@
         "name": "GA4 - Evento Clique Contribuição",
         "type": "gaawe",
         "parameter": [
+          {"type": "TEMPLATE", "key": "eventName", "value": "clique_contribuicao"},
           {
-            "type": "template",
-            "key": "eventName",
-            "value": "clique_contribuicao"
-          },
-          {
-            "type": "list",
+            "type": "LIST",
             "key": "eventParameters",
             "list": [
-              {
-                "type": "map",
-                "map": [
-                  {"type": "template", "key": "name",  "value": "pagina_origem"},
-                  {"type": "template", "key": "value", "value": "{{Page Path}}"}
-                ]
-              },
-              {
-                "type": "map",
-                "map": [
-                  {"type": "template", "key": "name",  "value": "destino_url"},
-                  {"type": "template", "key": "value", "value": "{{Click URL}}"}
-                ]
-              }
+              {"type": "MAP", "map": [
+                {"type": "TEMPLATE", "key": "name",  "value": "pagina_origem"},
+                {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}
+              ]},
+              {"type": "MAP", "map": [
+                {"type": "TEMPLATE", "key": "name",  "value": "destino_url"},
+                {"type": "TEMPLATE", "key": "value", "value": "{{Click URL}}"}
+              ]}
             ]
           }
         ],
@@ -246,22 +234,15 @@
         "name": "GA4 - Evento Reserva Sorteio",
         "type": "gaawe",
         "parameter": [
+          {"type": "TEMPLATE", "key": "eventName", "value": "reserva_sorteio"},
           {
-            "type": "template",
-            "key": "eventName",
-            "value": "reserva_sorteio"
-          },
-          {
-            "type": "list",
+            "type": "LIST",
             "key": "eventParameters",
             "list": [
-              {
-                "type": "map",
-                "map": [
-                  {"type": "template", "key": "name",  "value": "pagina_origem"},
-                  {"type": "template", "key": "value", "value": "{{Page Path}}"}
-                ]
-              }
+              {"type": "MAP", "map": [
+                {"type": "TEMPLATE", "key": "name",  "value": "pagina_origem"},
+                {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}
+              ]}
             ]
           }
         ],
@@ -274,22 +255,15 @@
         "name": "GA4 - Evento Comprovante Enviado",
         "type": "gaawe",
         "parameter": [
+          {"type": "TEMPLATE", "key": "eventName", "value": "comprovante_enviado"},
           {
-            "type": "template",
-            "key": "eventName",
-            "value": "comprovante_enviado"
-          },
-          {
-            "type": "list",
+            "type": "LIST",
             "key": "eventParameters",
             "list": [
-              {
-                "type": "map",
-                "map": [
-                  {"type": "template", "key": "name",  "value": "presente_url"},
-                  {"type": "template", "key": "value", "value": "{{Page Path}}"}
-                ]
-              }
+              {"type": "MAP", "map": [
+                {"type": "TEMPLATE", "key": "name",  "value": "presente_url"},
+                {"type": "TEMPLATE", "key": "value", "value": "{{Page Path}}"}
+              ]}
             ]
           }
         ],
@@ -302,11 +276,7 @@
         "name": "GA4 - Evento Conversão Concluída",
         "type": "gaawe",
         "parameter": [
-          {
-            "type": "template",
-            "key": "eventName",
-            "value": "conversao_concluida"
-          }
+          {"type": "TEMPLATE", "key": "eventName", "value": "conversao_concluida"}
         ],
         "firingTriggerId": ["14"]
       },
@@ -317,22 +287,15 @@
         "name": "GA4 - Evento Ver Presente",
         "type": "gaawe",
         "parameter": [
+          {"type": "TEMPLATE", "key": "eventName", "value": "ver_presente"},
           {
-            "type": "template",
-            "key": "eventName",
-            "value": "ver_presente"
-          },
-          {
-            "type": "list",
+            "type": "LIST",
             "key": "eventParameters",
             "list": [
-              {
-                "type": "map",
-                "map": [
-                  {"type": "template", "key": "name",  "value": "url_presente"},
-                  {"type": "template", "key": "value", "value": "{{Click URL}}"}
-                ]
-              }
+              {"type": "MAP", "map": [
+                {"type": "TEMPLATE", "key": "name",  "value": "url_presente"},
+                {"type": "TEMPLATE", "key": "value", "value": "{{Click URL}}"}
+              ]}
             ]
           }
         ],
@@ -345,11 +308,7 @@
         "name": "GA4 - Pageview Sorteio",
         "type": "gaawe",
         "parameter": [
-          {
-            "type": "template",
-            "key": "eventName",
-            "value": "view_sorteio"
-          }
+          {"type": "TEMPLATE", "key": "eventName", "value": "view_sorteio"}
         ],
         "firingTriggerId": ["16"]
       },
@@ -360,11 +319,7 @@
         "name": "GA4 - Pageview Meta",
         "type": "gaawe",
         "parameter": [
-          {
-            "type": "template",
-            "key": "eventName",
-            "value": "view_meta"
-          }
+          {"type": "TEMPLATE", "key": "eventName", "value": "view_meta"}
         ],
         "firingTriggerId": ["17"]
       }
