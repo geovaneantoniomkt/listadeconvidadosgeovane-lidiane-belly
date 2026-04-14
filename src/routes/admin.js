@@ -30,6 +30,10 @@ router.post('/login', redirectIfAuth, (req, res) => {
   const adminUser = process.env.ADMIN_USERNAME || 'admin';
   const adminPass = process.env.ADMIN_PASSWORD || 'casa2024';
 
+  // Log diagnóstico (não expõe senha, só tamanho e se bate)
+  console.log(`[LOGIN] user: "${username}" (esperado: "${adminUser}", bate: ${username === adminUser})`);
+  console.log(`[LOGIN] pass length digitada: ${password?.length}, esperada: ${adminPass.length}, bate: ${password === adminPass}`);
+
   if (username === adminUser && password === adminPass) {
     req.session.admin = true;
     req.flash('success', 'Bem-vindo ao painel! 🏠');
