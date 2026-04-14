@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorteio | Admin</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/pages/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-wrapper">
+  <%- include('./sidebar', { currentPage: 'raffle' }) %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Gerenciar Sorteio</h1>
+    </div>
+
+    <div class="admin-content">
+      <% if (flash && flash.success && flash.success.length > 0) { %>
+        <div class="alert alert-success"><%= flash.success[0] %></div>
+      <% } %>
+
+      <!-- Stats -->
+      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: var(--space-6);">
+        <div class="stat-card primary">
+          <div class="stat-icon">🎰</div>
+          <div class="stat-value"><%= totals.total %></div>
+          <div class="stat-label">Números registrados</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value"><%= totals.pagos %></div>
+          <div class="stat-label">Pagamentos confirmados</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value">R$ <%= parseFloat(totals.arrecadado).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+          <div class="stat-label">Total arrecadado</div>
+        </div>
+      </div>
+
+      <!-- Tabela de números -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <h2 class="admin-section-title">Participantes do Sorteio</h2>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (numbers.length === 0) { %>
+              <tr>
+                <td colspan="7" style="text-align: center; padding: var(--space-8); color: var(--color-text-muted);">
+                  Nenhuma participação ainda.
+                </td>
+              </tr>
+              <% } %>
+              <% numbers.forEach(n => { %>
+              <tr>
+                <td>
+                  <span style="font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 700; color: var(--color-primary);">
+                    <%= String(n.number).padStart(3, '0') %>
+                  </span>
+                </td>
+                <td style="font-weight: 600;"><%= n.name %></td>
+                <td><%= n.phone %></td>
+                <td>R$ <%= parseFloat(n.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></td>
+                <td>
+                  <span class="badge badge-<%= n.status === 'pago' ? 'disponivel' : n.status === 'cancelado' ? 'comprado' : 'reservado' %>">
+                    <%= n.status %>
+                  </span>
+                </td>
+                <td style="font-size: var(--text-sm); color: var(--color-text-muted);">
+                  <%= n.paid_at ? new Date(n.paid_at).toLocaleDateString('pt-BR') : new Date(n.reserved_at).toLocaleDateString('pt-BR') %>
+                </td>
+                <td>
+                  <div style="display: flex; gap: var(--space-2);">
+                    <% if (n.status === 'reservado') { %>
+                    <form method="POST" action="/admin/sorteio/<%= n.id %>/confirmar" style="margin: 0;">
+                      <button type="submit" class="btn btn-primary btn-sm">✅ Confirmar</button>
+                    </form>
+                    <form method="POST" action="/admin/sorteio/<%= n.id %>/cancelar" style="margin: 0;"
+                          onsubmit="return confirm('Cancelar número <%= n.number %>?')">
+                      <button type="submit" class="btn btn-ghost btn-sm" style="color: var(--color-error);">❌</button>
+                    </form>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

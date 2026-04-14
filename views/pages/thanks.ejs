@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obrigado! | Casa Nova Geovane & Lidiane 🏠</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<%- include('../partials/header') %>
+
+<div class="header-offset">
+
+  <section class="section">
+    <div class="container">
+      <div class="thanks-page fade-in">
+
+        <% if (tipo === 'comprovante') { %>
+          <div class="thanks-icon">📎</div>
+          <h1 class="thanks-title">Comprovante enviado! 🎉</h1>
+          <p class="thanks-text">
+            <% if (nome) { %><strong><%= decodeURIComponent(nome) %></strong>, obrigado<% } else { %>Obrigado<% } %>
+            por enviar o comprovante!
+            Nossa família vai verificar com carinho
+            e confirmar o presente em breve. Você vai fazer parte da nossa história! 💚
+          </p>
+
+        <% } else if (tipo === 'sorteio') { %>
+          <div class="thanks-icon">🎰</div>
+          <h1 class="thanks-title">Participação registrada! 🍀</h1>
+          <p class="thanks-text">
+            <% if (nome) { %><strong><%= decodeURIComponent(nome) %></strong>, boa sorte!<% } else { %>Boa sorte!<% } %>
+            Você escolheu
+            <strong><%= qtd %> número<%= qtd != 1 ? 's' : '' %></strong>
+            no sorteio. Total: <strong>R$ <%= parseFloat(total || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></strong>.
+            Torce muito que o seu número saia! 🤞
+          </p>
+
+        <% } else { %>
+          <div class="thanks-icon">💝</div>
+          <h1 class="thanks-title">Muito obrigado! 💚</h1>
+          <p class="thanks-text">
+            Sua generosidade significa o mundo para nossa família.
+            Cada gesto de carinho nos aproxima mais do nosso sonho.
+            Que Deus abençoe você sempre! 🙏
+          </p>
+        <% } %>
+
+        <!-- Próximos passos -->
+        <div style="background: var(--color-primary-soft); border-radius: var(--radius-xl); padding: var(--space-8); max-width: 480px; width: 100%; text-align: left; margin-bottom: var(--space-8);">
+          <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4); text-align: center;">O que acontece agora?</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-4);">
+            <% if (tipo === 'comprovante') { %>
+            <li style="display: flex; gap: var(--space-3);">
+              <span>🔍</span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Nossa família vai verificar o comprovante enviado</span>
+            </li>
+            <li style="display: flex; gap: var(--space-3);">
+              <span>✅</span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Após aprovação, o presente aparece como "Comprado" na lista</span>
+            </li>
+            <li style="display: flex; gap: var(--space-3);">
+              <span>💚</span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Seu nome fica registrado para sempre nessa história</span>
+            </li>
+            <% } else if (tipo === 'sorteio') { %>
+            <li style="display: flex; gap: var(--space-3);">
+              <span>💳</span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Assim que o pagamento for confirmado, seus números ficam garantidos</span>
+            </li>
+            <li style="display: flex; gap: var(--space-3);">
+              <span>📢</span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">A data e o prêmio do sorteio serão anunciados em breve</span>
+            </li>
+            <li style="display: flex; gap: var(--space-3);">
+              <span>🍀</span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Boa sorte! Torcemos muito por você!</span>
+            </li>
+            <% } else { %>
+            <li style="display: flex; gap: var(--space-3);">
+              <span>💚</span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Sua contribuição vai direto para o sonho do nosso lar</span>
+            </li>
+            <li style="display: flex; gap: var(--space-3);">
+              <span>🙏</span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Geovane, Lidiane e Belly agradecem de coração</span>
+            </li>
+            <% } %>
+          </ul>
+        </div>
+
+        <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: center;">
+          <a href="/" class="btn btn-primary btn-lg">🏠 Voltar ao início</a>
+          <a href="/presentes" class="btn btn-outline btn-lg">🎁 Ver lista de presentes</a>
+        </div>
+
+        <!-- Compartilhar -->
+        <div style="margin-top: var(--space-10); text-align: center;">
+          <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4);">
+            Conta pra alguém! Cada compartilhamento ajuda nossa família 💚
+          </p>
+          <a href="https://wa.me/?text=Ajudei%20a%20família%20Geovane%20%26%20Lidiane%20com%20a%20lista%20de%20presentes%20da%20casa%20nova!%20🏠%20Veja%20você%20também:"
+             target="_blank" class="btn btn-sm" style="background: #25D366; color: white; border-color: #25D366;">
+            💬 Compartilhar no WhatsApp
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<%- include('../partials/footer') %>
+
+<script src="/js/main.js"></script>
+<script>
+// Dispara confete!
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof launchConfetti === 'function') launchConfetti();
+  else {
+    // Confete simples
+    const colors = ['#3D5A4A','#B5705A','#C4963A','#527A65','#C9897A'];
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    document.body.appendChild(container);
+    for (let i = 0; i < 60; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.cssText = `
+        left: ${Math.random() * 100}%;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        --duration: ${2 + Math.random() * 2}s;
+        --delay: ${Math.random() * 1}s;
+        --drift: ${(Math.random() - 0.5) * 200}px;
+        width: ${6 + Math.random() * 8}px;
+        height: ${6 + Math.random() * 8}px;
+        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      `;
+      container.appendChild(piece);
+    }
+    setTimeout(() => container.remove(), 4000);
+  }
+});
+</script>
+</body>
+</html>

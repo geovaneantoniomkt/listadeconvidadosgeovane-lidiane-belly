@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página não encontrada | Casa Nova 🏠</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<%- include('../partials/header') %>
+
+<div class="header-offset">
+  <section class="section">
+    <div class="container">
+      <div class="page-404 fade-in">
+        <div class="page-404-icon float">🏚️</div>
+        <h1 style="font-size: clamp(var(--text-2xl), 5vw, var(--text-4xl)); margin-bottom: var(--space-4);">
+          Ops! Essa página se mudou.
+        </h1>
+        <p style="font-size: var(--text-lg); color: var(--color-text-secondary); max-width: 480px; margin: 0 auto var(--space-8);">
+          Parece que essa página resolveu pular fora antes da gente.
+          Mas não precisa se preocupar — a lista de presentes ainda está aqui te esperando! 😄
+        </p>
+        <div style="font-family: var(--font-serif); font-size: 6rem; font-weight: 700; color: var(--color-border); line-height: 1; margin-bottom: var(--space-8);">
+          404
+        </div>
+        <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: center;">
+          <a href="/" class="btn btn-primary btn-lg">🏠 Voltar ao início</a>
+          <a href="/presentes" class="btn btn-outline btn-lg">🎁 Ver presentes</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body>
+</html>

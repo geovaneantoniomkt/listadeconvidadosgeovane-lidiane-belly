@@ -1,0 +1,12 @@
+node_modules/
+.env
+*.db
+*.db-journal
+uploads/receipts/*.jpg
+uploads/receipts/*.jpeg
+uploads/receipts/*.png
+uploads/receipts/*.pdf
+uploads/products/*.jpg
+uploads/products/*.jpeg
+uploads/products/*.png
+.DS_Store

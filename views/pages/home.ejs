@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casa Nova Geovane & Lidiane 🏠 — Lista de Presentes</title>
+  <meta name="description" content="A lista de presentes de casa nova da família Geovane, Lidiane e Belly. Ajude a gente a construir nosso lar com amor!">
+  <meta property="og:title" content="Casa Nova Geovane & Lidiane 🏠">
+  <meta property="og:description" content="Nossa lista de presentes de casa nova. Cada presente é um pedacinho do nosso lar.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<%- include('../partials/header') %>
+<%- include('../partials/popups') %>
+
+<!-- ═══════════════════════════════════════════
+     HERO SECTION
+     ═══════════════════════════════════════════ -->
+<section class="hero header-offset">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-content">
+
+    <!-- Texto -->
+    <div class="hero-text fade-in">
+      <div class="hero-eyebrow">
+        🏠 Nova fase. Novo lar. Novo começo.
+      </div>
+      <h1 class="hero-title">
+        É hora de construir<br>
+        nosso <em>lar com amor</em><br>
+        <span class="title-accent">— e com vocês.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Depois de muito sonho, planejamento e uma filha que provou que a gente é corajoso mesmo —
+        finalmente chegou a hora da nossa <strong>casa nova</strong>.
+        Cada presente que você escolher vai fazer parte dessa história pra sempre. 💚
+      </p>
+
+      <div class="hero-ctas">
+        <a href="/presentes" class="btn btn-primary btn-lg">
+          🎁 Ver lista de presentes
+        </a>
+        <a href="<%= settings.mercadopago_link || '#' %>" target="_blank" class="btn btn-secondary btn-lg">
+          💝 Contribuir com qualquer valor
+        </a>
+        <a href="/sorteio" class="btn btn-outline btn-lg">
+          🎰 Participar do sorteio
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-value"><%= stats.total %></div>
+          <div class="hero-stat-label">itens na lista</div>
+        </div>
+        <div>
+          <div class="hero-stat-value"><%= stats.purchased %></div>
+          <div class="hero-stat-label">já conquistados</div>
+        </div>
+        <div>
+          <div class="hero-stat-value"><%= stats.contributors %></div>
+          <div class="hero-stat-label">amigos ajudando</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual -->
+    <div class="hero-visual fade-in fade-in-delay-2">
+      <div class="hero-house">🏡</div>
+      <div class="hero-floating-cards">
+        <div class="hero-floating-card">🛋️ Sofá novo!</div>
+        <div class="hero-floating-card">⭐ Mais desejado</div>
+        <div class="hero-floating-card">❤️ <%= stats.contributors %> amigos</div>
+        <div class="hero-floating-card">🎯 <%= goal.percentMoney %>% da meta</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     CONHEÇA A FAMÍLIA
+     ═══════════════════════════════════════════ -->
+<section class="section family-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">💚 Somos três</span>
+      <h2 class="section-title">Conheça quem mora aqui</h2>
+      <p class="section-subtitle">
+        Uma família pequena com sonhos do tamanho de uma casa — e de um coração ainda maior.
+      </p>
+    </div>
+
+    <div class="family-grid stagger-children">
+
+      <!-- Geovane -->
+      <div class="card family-card">
+        <div class="family-avatar">👨</div>
+        <div class="family-name">Geovane</div>
+        <div class="family-role">O Chefe (que não manda em nada)</div>
+        <p class="family-bio">
+          Trabalha duro, sonha alto e jura que cozinha bem
+          — o que a Lidiane educadamente discorda.
+          Ama a família acima de tudo, é apaixonado pelo que faz
+          e vai montar cada móvel novo com orgulho... e talvez 3 parafusos sobrando.
+          Obrigado por estar aqui! 🔧
+        </p>
+      </div>
+
+      <!-- Lidiane -->
+      <div class="card family-card">
+        <div class="family-avatar">👩</div>
+        <div class="family-name">Lidiane</div>
+        <div class="family-role">A Rainha (de verdade)</div>
+        <p class="family-bio">
+          Organiza, planeja, cozinha, decora e ainda cuida da Belly
+          com uma energia que a ciência não consegue explicar.
+          Sonha com uma geladeira nova há dois anos.
+          Tem uma lista de presentes que foi feita com o coração — e muita pesquisa. 📋✨
+        </p>
+      </div>
+
+      <!-- Belly -->
+      <div class="card family-card">
+        <div class="family-avatar">👶</div>
+        <div class="family-name">Belly</div>
+        <div class="family-role">A CEO (sem diploma)</div>
+        <p class="family-bio">
+          A razão de tudo isso. Chegou ao mundo e mudou tudo —
+          pra melhor, claro (depois que passaram as noites sem dormir).
+          Não sabe ainda o que está acontecendo,
+          mas vai crescer num lar cheio de amor, história e presentes escolhidos com carinho. 🌟
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     PRÉVIA DA HISTÓRIA
+     ═══════════════════════════════════════════ -->
+<section class="section" style="background: var(--color-bg-warm);">
+  <div class="container">
+    <div class="history-preview">
+
+      <div class="history-preview-visual fade-in slide-in-left">🌱→🌳→🏠</div>
+
+      <div class="fade-in slide-in-right">
+        <span class="section-eyebrow">💕 Nossa trajetória</span>
+        <h2 class="section-title" style="text-align: left; margin-bottom: var(--space-6);">
+          Uma história de amor,<br>crescimento e muita fé
+        </h2>
+        <p style="font-size: var(--text-lg); margin-bottom: var(--space-6); line-height: 1.8;">
+          Éramos só um casal apaixonado e um sonho grande.
+          Construímos nosso caminho juntos, passo a passo,
+          até que um dia a Belly chegou e acelerou todos os planos.
+        </p>
+        <p style="margin-bottom: var(--space-8);">
+          Hoje, essa casa nova não é só um endereço —
+          é a concretização de tudo que sonhamos juntos.
+          E você faz parte dessa história.
+        </p>
+        <a href="/nossa-historia" class="btn btn-primary">
+          Ler nossa história completa 📖
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     META DA FAMÍLIA
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">🎯 Nossa meta</span>
+      <h2 class="section-title">Juntos chegamos lá</h2>
+    </div>
+
+    <div class="goal-preview fade-in">
+      <p class="goal-preview-title">Construindo nosso lar, tijolo por tijolo</p>
+      <p class="goal-preview-subtitle">Cada contribuição, por menor que seja, faz uma diferença enorme.</p>
+
+      <div class="progress-container">
+        <div class="progress-bar progress-bar-animated"
+             id="homeProgressBar"
+             style="width: 0%"
+             data-target="<%= goal.percentMoney %>"></div>
+      </div>
+
+      <div class="goal-values">
+        <div class="goal-value-item">
+          <div class="goal-value-amount">R$ <%= goal.totalMoney.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+          <div class="goal-value-label">Arrecadado</div>
+        </div>
+        <div class="goal-value-item">
+          <div class="goal-value-amount"><%= goal.percentMoney %>%</div>
+          <div class="goal-value-label">Conquistado</div>
+        </div>
+        <div class="goal-value-item">
+          <div class="goal-value-amount">R$ <%= goal.metaTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+          <div class="goal-value-label">Meta total</div>
+        </div>
+      </div>
+
+      <br>
+      <a href="/meta" class="btn btn-outline-white">
+        Ver detalhes da meta →
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     PRESENTES EM DESTAQUE
+     ═══════════════════════════════════════════ -->
+<% if (featured && featured.length > 0) { %>
+<section class="section" style="background: var(--color-bg-warm);">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">⭐ Lista de desejos</span>
+      <h2 class="section-title">Presentes mais desejados</h2>
+      <p class="section-subtitle">
+        Esses itens são prioridade para a família. São os que vão fazer mais diferença no dia a dia do lar.
+      </p>
+    </div>
+
+    <div class="featured-grid stagger-children">
+      <% featured.forEach(product => { %>
+      <a href="/presentes/<%= product.id %>" class="product-card-link">
+        <div class="card product-card card-img-zoom">
+
+          <!-- Badges -->
+          <div class="product-badges">
+            <% if (product.badge === 'mais-desejado') { %>
+              <span class="badge badge-mais-desejado">⭐ Mais desejado</span>
+            <% } else if (product.badge === 'prioridade') { %>
+              <span class="badge badge-prioridade">🔴 Prioridade</span>
+            <% } else if (product.badge === 'quase-resolvido') { %>
+              <span class="badge badge-quase-resolvido">✅ Quase resolvido</span>
+            <% } %>
+          </div>
+
+          <!-- Status -->
+          <div class="product-img-placeholder" style="font-size: 4rem; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; background: var(--color-bg-subtle);">
+            <%= product.category_icon || '🎁' %>
+          </div>
+
+          <div class="product-body">
+            <p class="product-category"><%= product.category_icon %> <%= product.category_name || 'Geral' %></p>
+            <h3 class="product-name"><%= product.name %></h3>
+            <div class="product-price">R$ <%= parseFloat(product.price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+
+            <div class="product-footer" style="padding: 0; margin-top: var(--space-4); display: flex; align-items: center; justify-content: space-between;">
+              <%
+                const statusLabels = {
+                  disponivel: { text: 'Disponível', class: 'disponivel' },
+                  reservado: { text: 'Reservado', class: 'reservado' },
+                  aguardando_validacao: { text: 'Em validação', class: 'aguardando' },
+                  comprado: { text: 'Comprado! ✅', class: 'comprado' }
+                };
+                const s = statusLabels[product.status] || statusLabels.disponivel;
+              %>
+              <span class="badge badge-<%= s.class %> badge-dot"><%= s.text %></span>
+              <span style="font-size: var(--text-sm); color: var(--color-primary); font-weight: 600;">Ver detalhes →</span>
+            </div>
+          </div>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+
+    <div class="text-center" style="margin-top: var(--space-10);">
+      <a href="/presentes" class="btn btn-primary btn-lg">
+        Ver lista completa (<%= stats.total %> itens) 🎁
+      </a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+
+<!-- ═══════════════════════════════════════════
+     COMO AJUDAR
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">💡 Maneiras de ajudar</span>
+      <h2 class="section-title">Ajude do seu jeito</h2>
+      <p class="section-subtitle">
+        Não tem jeito certo nem errado. Qualquer forma de ajuda é recebida com imensa gratidão.
+      </p>
+    </div>
+
+    <div class="help-ways stagger-children">
+
+      <div class="help-way-card">
+        <span class="help-way-icon">💳</span>
+        <h3 class="help-way-title">Contribuir com Pix ou cartão</h3>
+        <p class="help-way-text">
+          Contribua com o valor que quiser via Mercado Pago.
+          Aceita Pix, débito, crédito à vista ou parcelado.
+          Simples, seguro e rápido.
+        </p>
+        <a href="<%= settings.mercadopago_link || '#' %>" target="_blank" class="btn btn-secondary btn-full">
+          💝 Contribuir agora
+        </a>
+      </div>
+
+      <div class="help-way-card">
+        <span class="help-way-icon">🎁</span>
+        <h3 class="help-way-title">Comprar um presente da lista</h3>
+        <p class="help-way-text">
+          Escolha um item da lista, compre diretamente no fornecedor
+          e envie o comprovante pra gente. O presente fica registrado no seu nome!
+        </p>
+        <a href="/presentes" class="btn btn-primary btn-full">
+          🛍️ Ver a lista
+        </a>
+      </div>
+
+      <div class="help-way-card">
+        <span class="help-way-icon">🎰</span>
+        <h3 class="help-way-title">Participar do sorteio</h3>
+        <p class="help-way-text">
+          Compre seus números da sorte por R$10 cada e concorra
+          a um prêmio especial. Quanto mais números, mais chances de ganhar!
+        </p>
+        <a href="/sorteio" class="btn btn-accent btn-full">
+          🍀 Quero participar!
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     BLOCO DE GRATIDÃO
+     ═══════════════════════════════════════════ -->
+<section class="section" style="background: var(--color-bg-warm);">
+  <div class="container">
+    <div class="gratitude-block fade-in">
+      <span class="section-eyebrow">🙏 Gratidão</span>
+      <h2 class="section-title" style="margin-bottom: var(--space-6);">
+        Não é só um presente.<br>
+        É um <em style="color: var(--color-secondary);">pedacinho</em> do nosso lar.
+      </h2>
+      <p class="section-subtitle" style="max-width: 640px; margin: 0 auto var(--space-10);">
+        Cada item dessa lista tem um porquê. Cada contribuição representa amor e cuidado
+        com a nossa família. Saber que vocês fazem parte desse novo começo
+        nos enche de gratidão que não cabe em palavras.
+      </p>
+      <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
+        <a href="/presentes" class="btn btn-primary btn-lg">🎁 Ver lista de presentes</a>
+        <a href="/nossa-historia" class="btn btn-outline btn-lg">📖 Nossa história</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<%- include('../partials/footer') %>
+
+<!-- CTA Flutuante Mobile -->
+<div class="floating-cta">
+  <a href="<%= settings.mercadopago_link || '#' %>" target="_blank" class="btn btn-secondary" style="flex: 1;">
+    💝 Contribuir
+  </a>
+  <a href="/presentes" class="btn btn-primary" style="flex: 1;">
+    🎁 Ver lista
+  </a>
+</div>
+
+<script>
+// Animar barra de progresso ao carregar
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const bar = document.getElementById('homeProgressBar');
+    if (bar) {
+      bar.style.width = bar.dataset.target + '%';
+    }
+  }, 500);
+});
+</script>
+
+<script src="/js/main.js"></script>
+<script src="/js/popups.js"></script>
+
+</body>
+</html>

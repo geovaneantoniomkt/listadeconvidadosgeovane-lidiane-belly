@@ -1,0 +1,59 @@
+<!-- Admin Sidebar -->
+<aside class="admin-sidebar" id="adminSidebar">
+  <div class="admin-sidebar-header">
+    <div class="admin-brand">
+      🏠 Casa Nova
+      <span>Painel Administrativo</span>
+    </div>
+  </div>
+
+  <nav class="admin-nav">
+    <p class="admin-nav-section">Visão geral</p>
+    <a href="/admin/dashboard" class="admin-nav-link <%= currentPage === 'dashboard' ? 'active' : '' %>">
+      <span class="admin-nav-icon">📊</span>
+      Dashboard
+    </a>
+
+    <p class="admin-nav-section">Presentes</p>
+    <a href="/admin/produtos" class="admin-nav-link <%= currentPage === 'products' ? 'active' : '' %>">
+      <span class="admin-nav-icon">🎁</span>
+      Produtos
+    </a>
+    <a href="/admin/categorias" class="admin-nav-link <%= currentPage === 'categories' ? 'active' : '' %>">
+      <span class="admin-nav-icon">📂</span>
+      Categorias
+    </a>
+    <a href="/admin/comprovantes" class="admin-nav-link <%= currentPage === 'receipts' ? 'active' : '' %>">
+      <span class="admin-nav-icon">📎</span>
+      Comprovantes
+    </a>
+
+    <p class="admin-nav-section">Financeiro</p>
+    <a href="/admin/contribuicoes" class="admin-nav-link <%= currentPage === 'contributions' ? 'active' : '' %>">
+      <span class="admin-nav-icon">💰</span>
+      Contribuições
+    </a>
+    <a href="/admin/sorteio" class="admin-nav-link <%= currentPage === 'raffle' ? 'active' : '' %>">
+      <span class="admin-nav-icon">🎰</span>
+      Sorteio
+    </a>
+
+    <p class="admin-nav-section">Sistema</p>
+    <a href="/admin/configuracoes" class="admin-nav-link <%= currentPage === 'settings' ? 'active' : '' %>">
+      <span class="admin-nav-icon">⚙️</span>
+      Configurações
+    </a>
+    <a href="/" target="_blank" class="admin-nav-link">
+      <span class="admin-nav-icon">🌐</span>
+      Ver site
+    </a>
+  </nav>
+
+  <div class="admin-sidebar-footer">
+    <form method="POST" action="/admin/logout">
+      <button type="submit" class="btn btn-ghost btn-sm btn-full" style="color: rgba(255,255,255,0.5); text-align: left; justify-content: flex-start; gap: var(--space-2);">
+        🚪 Sair
+      </button>
+    </form>
+  </div>
+</aside>

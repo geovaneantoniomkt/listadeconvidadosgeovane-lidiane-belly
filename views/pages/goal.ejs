@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nossa Meta | Casa Nova Geovane & Lidiane 🏠</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<%- include('../partials/header') %>
+
+<div class="header-offset section">
+<div class="container">
+<div class="goal-page">
+
+  <!-- Hero da meta -->
+  <div class="goal-hero fade-in">
+    <span class="section-eyebrow" style="margin-bottom: var(--space-4); background: rgba(255,255,255,0.15); color: white;">🎯 Nossa conquista</span>
+    <h1 class="goal-hero-title">Nossa Meta de Lar</h1>
+    <p class="goal-hero-subtitle">
+      Cada contribuição, grande ou pequena, nos aproxima do sonho. Juntos chegamos lá!
+    </p>
+
+    <div style="margin-bottom: var(--space-6);">
+      <div class="goal-big-number" id="heroAmount">
+        R$ <%= goal.totalMoney.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+      </div>
+      <div class="goal-big-label">arrecadado até agora</div>
+    </div>
+
+    <div class="progress-container" style="margin-bottom: var(--space-6);">
+      <div class="progress-bar progress-bar-animated"
+           id="heroProgressBar"
+           style="width: 0%; height: 16px;"
+           data-target="<%= goal.percentMoney %>">
+      </div>
+    </div>
+
+    <div class="goal-values">
+      <div class="goal-value-item">
+        <div class="goal-value-amount"><%= goal.percentMoney %>%</div>
+        <div class="goal-value-label">Conquistado</div>
+      </div>
+      <div class="goal-value-item">
+        <div class="goal-value-amount">R$ <%= goal.faltaMoney.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+        <div class="goal-value-label">Ainda falta</div>
+      </div>
+      <div class="goal-value-item">
+        <div class="goal-value-amount">R$ <%= goal.metaTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+        <div class="goal-value-label">Meta total</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card de progresso detalhado -->
+  <div class="goal-progress-card fade-in">
+    <div class="goal-tabs">
+      <button class="goal-tab active" id="tab-money" onclick="switchTab('money')">
+        💰 Dinheiro arrecadado
+      </button>
+      <button class="goal-tab" id="tab-impact" onclick="switchTab('impact')">
+        🏠 Impacto total
+      </button>
+    </div>
+
+    <div id="panel-money">
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); margin-bottom: var(--space-6);">
+        <div style="text-align: center; padding: var(--space-5); background: var(--color-success-soft); border-radius: var(--radius-lg);">
+          <div style="font-size: 1.75rem; margin-bottom: var(--space-2);">💰</div>
+          <div style="font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 700; color: var(--color-success);">
+            R$ <%= goal.totalMoney.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+          </div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; margin-top: 4px;">Total arrecadado</div>
+        </div>
+        <div style="text-align: center; padding: var(--space-5); background: var(--color-primary-soft); border-radius: var(--radius-lg);">
+          <div style="font-size: 1.75rem; margin-bottom: var(--space-2);">🎯</div>
+          <div style="font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 700; color: var(--color-primary);">
+            R$ <%= goal.metaTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+          </div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; margin-top: 4px;">Meta total</div>
+        </div>
+        <div style="text-align: center; padding: var(--space-5); background: var(--color-warning-soft); border-radius: var(--radius-lg);">
+          <div style="font-size: 1.75rem; margin-bottom: var(--space-2);">📊</div>
+          <div style="font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 700; color: var(--color-warning);">
+            <%= goal.percentMoney %>%
+          </div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; margin-top: 4px;">Progresso</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: var(--space-4);">
+        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+          <span style="font-size: var(--text-sm); font-weight: 600; color: var(--color-text);">Progresso da meta</span>
+          <span style="font-size: var(--text-sm); color: var(--color-primary); font-weight: 600;"><%= goal.percentMoney %>%</span>
+        </div>
+        <div class="progress-container progress-bar-lg">
+          <div class="progress-bar progress-bar-animated"
+               id="progressMoney"
+               style="width: 0%"
+               data-target="<%= goal.percentMoney %>">
+          </div>
+        </div>
+      </div>
+
+      <% if (goal.percentMoney >= 100) { %>
+        <div class="alert alert-success">🎉 Meta atingida! Que família incrível essa que vocês são!</div>
+      <% } else if (goal.percentMoney >= 75) { %>
+        <div class="alert alert-success">🚀 Quase lá! Mais um esforço e a meta é de vocês!</div>
+      <% } else if (goal.percentMoney >= 50) { %>
+        <div class="alert alert-info">💪 Já chegamos na metade! Cada contribuição faz diferença!</div>
+      <% } else { %>
+        <div class="alert alert-warning">🌱 Cada presente, cada contribuição nos aproxima mais do sonho. Obrigado!</div>
+      <% } %>
+    </div>
+
+    <div id="panel-impact" style="display: none;">
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); margin-bottom: var(--space-6);">
+        <div style="text-align: center; padding: var(--space-5); background: var(--color-primary-soft); border-radius: var(--radius-lg);">
+          <div style="font-size: 1.75rem; margin-bottom: var(--space-2);">🏠</div>
+          <div style="font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 700; color: var(--color-primary);">
+            R$ <%= goal.totalImpact.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+          </div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; margin-top: 4px;">Impacto total</div>
+        </div>
+        <div style="text-align: center; padding: var(--space-5); background: var(--color-success-soft); border-radius: var(--radius-lg);">
+          <div style="font-size: 1.75rem; margin-bottom: var(--space-2);">💰</div>
+          <div style="font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 700; color: var(--color-success);">
+            R$ <%= goal.totalMoney.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+          </div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; margin-top: 4px;">Dinheiro</div>
+        </div>
+        <div style="text-align: center; padding: var(--space-5); background: var(--color-accent-soft); border-radius: var(--radius-lg);">
+          <div style="font-size: 1.75rem; margin-bottom: var(--space-2);">🎁</div>
+          <div style="font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 700; color: var(--color-accent);">
+            <%= goal.percentTotal %>%
+          </div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; margin-top: 4px;">Impacto % meta</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: var(--space-4);">
+        <div class="progress-container progress-bar-lg">
+          <div class="progress-bar progress-bar-animated"
+               id="progressImpact"
+               style="width: 0%; background: linear-gradient(90deg, var(--color-primary), var(--color-accent));"
+               data-target="<%= goal.percentTotal %>">
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        ℹ️ O impacto total considera dinheiro arrecadado + valor de presentes já comprados diretamente nas lojas.
+      </div>
+    </div>
+  </div>
+
+  <!-- Quem já ajudou -->
+  <% if (contributors && contributors.length > 0) { %>
+  <div class="goal-progress-card fade-in">
+    <h2 style="font-family: var(--font-serif); font-size: var(--text-2xl); margin-bottom: var(--space-6);">
+      💚 Corações que já ajudaram
+    </h2>
+    <div class="helpers-list">
+      <% contributors.forEach(c => { %>
+      <div class="helper-chip">
+        <div class="avatar-mini">
+          <%= c.name.charAt(0).toUpperCase() %>
+        </div>
+        <div>
+          <div style="font-weight: 600; font-size: var(--text-sm);"><%=c.name%></div>
+          <% if (c.message) { %>
+            <div style="font-size: var(--text-xs); color: var(--color-text-muted);">"<%= c.message.substring(0, 40) %><%= c.message.length > 40 ? '...' : '' %>"</div>
+          <% } %>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <p style="text-align: center; color: var(--color-text-muted); font-size: var(--text-sm); margin-top: var(--space-6);">
+      Com muita gratidão por cada um 💚
+    </p>
+  </div>
+  <% } %>
+
+  <!-- CTA -->
+  <div class="gratitude-block fade-in" style="margin-top: var(--space-8);">
+    <span class="section-eyebrow">💝 Junte-se a eles</span>
+    <h2 class="section-title" style="margin-bottom: var(--space-4);">
+      Faça parte dessa história
+    </h2>
+    <p style="color: var(--color-text-secondary); max-width: 480px; margin: 0 auto var(--space-8);">
+      Qualquer ajuda, de qualquer valor, transforma a nossa realidade.
+      Seja uma das pessoas que vão fazer nossa casa virar um lar.
+    </p>
+    <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
+      <a href="<%= settings.mercadopago_link || '#' %>" target="_blank" class="btn btn-primary btn-lg">
+        💝 Contribuir agora
+      </a>
+      <a href="/presentes" class="btn btn-outline btn-lg">
+        🎁 Ver lista de presentes
+      </a>
+      <a href="/sorteio" class="btn btn-accent btn-lg">
+        🎰 Participar do sorteio
+      </a>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<%- include('../partials/footer') %>
+
+<script>
+function switchTab(tab) {
+  document.getElementById('panel-money').style.display = tab === 'money' ? 'block' : 'none';
+  document.getElementById('panel-impact').style.display = tab === 'impact' ? 'block' : 'none';
+  document.getElementById('tab-money').classList.toggle('active', tab === 'money');
+  document.getElementById('tab-impact').classList.toggle('active', tab === 'impact');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    ['heroProgressBar', 'progressMoney', 'progressImpact'].forEach(id => {
+      const bar = document.getElementById(id);
+      if (bar) bar.style.width = bar.dataset.target + '%';
+    });
+  }, 400);
+});
+</script>
+<script src="/js/main.js"></script>
+</body>
+</html>

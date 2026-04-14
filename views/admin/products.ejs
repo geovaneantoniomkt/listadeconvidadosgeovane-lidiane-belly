@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtos | Admin</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/pages/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-wrapper">
+  <%- include('./sidebar', { currentPage: 'products' }) %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Produtos</h1>
+      <div class="admin-topbar-actions">
+        <a href="/admin/produtos/novo" class="btn btn-primary btn-sm">➕ Novo produto</a>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <% if (flash && flash.success && flash.success.length > 0) { %>
+        <div class="alert alert-success"><%= flash.success[0] %></div>
+      <% } %>
+      <% if (flash && flash.error && flash.error.length > 0) { %>
+        <div class="alert alert-error"><%= flash.error[0] %></div>
+      <% } %>
+
+      <div class="admin-section">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Preço</th>
+                <th>Status</th>
+                <th>Badge</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (products.length === 0) { %>
+              <tr>
+                <td colspan="6" style="text-align: center; padding: var(--space-8); color: var(--color-text-muted);">
+                  Nenhum produto cadastrado ainda.
+                  <a href="/admin/produtos/novo">Adicionar o primeiro</a>
+                </td>
+              </tr>
+              <% } %>
+              <% products.forEach(p => { %>
+              <tr>
+                <td>
+                  <div style="font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= p.name %></div>
+                  <div style="font-size: var(--text-xs); color: var(--color-text-muted);">ID: #<%= p.id %></div>
+                </td>
+                <td><%= p.category_name || '—' %></td>
+                <td>R$ <%= parseFloat(p.price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></td>
+                <td>
+                  <span class="status-dot <%= p.status === 'aguardando_validacao' ? 'aguardando' : p.status %>"></span>
+                  <%= p.status.replace('_', ' ') %>
+                </td>
+                <td>
+                  <% if (p.badge) { %>
+                    <span class="badge badge-<%= p.badge %>"><%= p.badge.replace('-', ' ') %></span>
+                  <% } else { %>
+                    <span style="color: var(--color-text-muted);">—</span>
+                  <% } %>
+                </td>
+                <td>
+                  <div style="display: flex; gap: var(--space-2);">
+                    <a href="/presentes/<%= p.id %>" target="_blank" class="btn btn-ghost btn-sm" title="Ver no site">👁️</a>
+                    <a href="/admin/produtos/<%= p.id %>/editar" class="btn btn-outline btn-sm">✏️</a>
+                    <form method="POST" action="/admin/produtos/<%= p.id %>/excluir" style="margin: 0;"
+                          onsubmit="return confirm('Tem certeza? Essa ação não pode ser desfeita.')">
+                      <button type="submit" class="btn btn-ghost btn-sm" style="color: var(--color-error);">🗑️</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

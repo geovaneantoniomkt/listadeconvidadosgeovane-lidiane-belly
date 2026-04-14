@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Admin</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/pages/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-wrapper">
+  <%- include('./sidebar', { currentPage: 'dashboard' }) %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Dashboard</h1>
+      <div class="admin-topbar-actions">
+        <a href="/" target="_blank" class="btn btn-outline btn-sm">🏠 Ver site</a>
+        <form method="POST" action="/admin/logout" style="margin: 0;">
+          <button type="submit" class="btn btn-ghost btn-sm">Sair</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Flash -->
+      <% if (flash && flash.success && flash.success.length > 0) { %>
+        <div class="alert alert-success"><%= flash.success[0] %></div>
+      <% } %>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-icon">🎁</div>
+          <div class="stat-value"><%= stats.totalProducts %></div>
+          <div class="stat-label">Produtos na lista</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value"><%= stats.purchased %></div>
+          <div class="stat-label">Já comprados</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-icon">📎</div>
+          <div class="stat-value"><%= stats.pending_receipts %></div>
+          <div class="stat-label">Comprovantes aguardando</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value">R$ <%= parseFloat(stats.total_contributions + stats.total_raffle).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+          <div class="stat-label">Total arrecadado</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+
+        <!-- Comprovantes recentes -->
+        <div class="admin-section">
+          <div class="admin-section-header">
+            <h2 class="admin-section-title">📎 Comprovantes recentes</h2>
+            <a href="/admin/comprovantes" class="btn btn-outline btn-sm">Ver todos</a>
+          </div>
+          <% if (recentReceipts.length === 0) { %>
+            <div class="admin-section-body">
+              <p style="color: var(--color-text-muted); font-size: var(--text-sm);">Nenhum comprovante ainda.</p>
+            </div>
+          <% } else { %>
+          <div class="table-container" style="border: none;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Enviado por</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% recentReceipts.forEach(r => { %>
+                <tr>
+                  <td style="font-weight: 600; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <%= r.product_name %>
+                  </td>
+                  <td><%= r.name %></td>
+                  <td>
+                    <span class="badge badge-<%= r.status === 'aguardando' ? 'reservado' : r.status === 'aprovado' ? 'disponivel' : 'comprado' %>">
+                      <%= r.status %>
+                    </span>
+                  </td>
+                  <td>
+                    <a href="/admin/comprovantes" class="btn btn-ghost btn-sm">Ver</a>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Contribuições recentes -->
+        <div class="admin-section">
+          <div class="admin-section-header">
+            <h2 class="admin-section-title">💰 Contribuições recentes</h2>
+            <a href="/admin/contribuicoes" class="btn btn-outline btn-sm">Ver todas</a>
+          </div>
+          <% if (recentContributions.length === 0) { %>
+            <div class="admin-section-body">
+              <p style="color: var(--color-text-muted); font-size: var(--text-sm);">Nenhuma contribuição ainda.</p>
+            </div>
+          <% } else { %>
+          <div class="table-container" style="border: none;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% recentContributions.forEach(c => { %>
+                <tr>
+                  <td style="font-weight: 600;"><%= c.name %></td>
+                  <td>R$ <%= parseFloat(c.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></td>
+                  <td>
+                    <span class="badge badge-<%= c.payment_status === 'confirmado' ? 'disponivel' : 'reservado' %>">
+                      <%= c.payment_status %>
+                    </span>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+        </div>
+
+      </div>
+
+      <!-- Links rápidos -->
+      <div class="admin-section" style="margin-top: var(--space-6);">
+        <div class="admin-section-header">
+          <h2 class="admin-section-title">⚡ Ações rápidas</h2>
+        </div>
+        <div class="admin-section-body" style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+          <a href="/admin/produtos/novo" class="btn btn-primary">➕ Novo produto</a>
+          <a href="/admin/comprovantes" class="btn btn-secondary">📎 Ver comprovantes</a>
+          <a href="/admin/configuracoes" class="btn btn-outline">⚙️ Configurações</a>
+          <a href="/admin/sorteio" class="btn btn-accent">🎰 Gerenciar sorteio</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

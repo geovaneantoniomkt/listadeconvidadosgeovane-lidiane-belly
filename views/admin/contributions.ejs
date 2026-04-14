@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contribuições | Admin</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/pages/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-wrapper">
+  <%- include('./sidebar', { currentPage: 'contributions' }) %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Contribuições</h1>
+      <div class="admin-topbar-actions">
+        <button class="btn btn-primary btn-sm" onclick="openModal('addModal')">➕ Registrar manual</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <% if (flash && flash.success && flash.success.length > 0) { %>
+        <div class="alert alert-success"><%= flash.success[0] %></div>
+      <% } %>
+
+      <!-- Totais -->
+      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="stat-card success">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value">R$ <%= parseFloat(totals.confirmado).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+          <div class="stat-label">Confirmado</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value">R$ <%= parseFloat(totals.pendente).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+          <div class="stat-label">Pendente</div>
+        </div>
+        <div class="stat-card primary">
+          <div class="stat-icon">📊</div>
+          <div class="stat-value">R$ <%= parseFloat(totals.confirmado + totals.pendente).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
+          <div class="stat-label">Total geral</div>
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div class="admin-section">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Valor</th>
+                <th>Mensagem</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (contributions.length === 0) { %>
+              <tr>
+                <td colspan="7" style="text-align: center; padding: var(--space-8); color: var(--color-text-muted);">
+                  Nenhuma contribuição registrada ainda.
+                </td>
+              </tr>
+              <% } %>
+              <% contributions.forEach(c => { %>
+              <tr>
+                <td style="font-weight: 600;"><%= c.name %></td>
+                <td><%= c.phone || '—' %></td>
+                <td style="font-weight: 600; color: var(--color-success);">
+                  R$ <%= parseFloat(c.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                </td>
+                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-sm); color: var(--color-text-muted);">
+                  <%= c.message || '—' %>
+                </td>
+                <td>
+                  <span class="badge badge-<%= c.payment_status === 'confirmado' ? 'disponivel' : c.payment_status === 'cancelado' ? 'comprado' : 'reservado' %>">
+                    <%= c.payment_status %>
+                  </span>
+                </td>
+                <td style="font-size: var(--text-sm); color: var(--color-text-muted);">
+                  <%= new Date(c.created_at).toLocaleDateString('pt-BR') %>
+                </td>
+                <td>
+                  <% if (c.payment_status === 'pendente') { %>
+                  <form method="POST" action="/admin/contribuicoes/<%= c.id %>/confirmar" style="margin: 0;">
+                    <button type="submit" class="btn btn-primary btn-sm">✅ Confirmar</button>
+                  </form>
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal — Registrar contribuição manual -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">➕ Registrar Contribuição</h2>
+      <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form method="POST" action="/admin/contribuicoes">
+        <div class="form-group">
+          <label class="form-label">Nome <span>*</span></label>
+          <input type="text" name="name" class="form-control" required placeholder="Nome do contribuinte">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Telefone</label>
+            <input type="text" name="phone" class="form-control" placeholder="(11) 99999-9999">
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input type="email" name="email" class="form-control" placeholder="email@exemplo.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor (R$) <span>*</span></label>
+          <input type="number" name="amount" class="form-control" required step="0.01" min="0.01" placeholder="0,00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mensagem</label>
+          <textarea name="message" class="form-control" rows="2" placeholder="Mensagem carinhosa (opcional)"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg">✅ Registrar como confirmado</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) closeModal(o.id); }));
+</script>
+<script src="/js/main.js"></script>
+</body>
+</html>

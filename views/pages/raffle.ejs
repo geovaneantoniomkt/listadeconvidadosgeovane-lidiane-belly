@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorteio | Casa Nova Geovane & Lidiane 🏠</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<%- include('../partials/header') %>
+
+<div class="header-offset">
+
+  <!-- Header da página -->
+  <section class="section-sm" style="background: linear-gradient(135deg, var(--color-accent-soft), var(--color-bg-warm));">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">🎰 Sorteio especial</span>
+        <h1 class="section-title">Sorteio da Casa Nova</h1>
+        <p class="section-subtitle">
+          Compre seus números da sorte por <strong>R$ <%= pricePerNumber.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></strong> cada.
+          Quanto mais números, mais chances de ganhar um prêmio especial!
+        </p>
+      </div>
+
+      <!-- Stats do sorteio -->
+      <div style="display: flex; justify-content: center; gap: var(--space-8); flex-wrap: wrap;">
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-serif); font-size: var(--text-3xl); font-weight: 700; color: var(--color-accent);"><%= stats.sold %></div>
+          <div style="font-size: var(--text-sm); color: var(--color-text-muted);">números vendidos</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-serif); font-size: var(--text-3xl); font-weight: 700; color: var(--color-primary);"><%= stats.available %></div>
+          <div style="font-size: var(--text-sm); color: var(--color-text-muted);">ainda disponíveis</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-serif); font-size: var(--text-3xl); font-weight: 700; color: var(--color-success);">R$ <%= pricePerNumber %></div>
+          <div style="font-size: var(--text-sm); color: var(--color-text-muted);">por número</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Flash messages -->
+  <% if (flash && flash.error && flash.error.length > 0) { %>
+  <div class="container" style="padding-top: var(--space-4);">
+    <div class="alert alert-error">⚠️ <%= flash.error[0] %></div>
+  </div>
+  <% } %>
+
+  <section class="section-sm">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 380px; gap: var(--space-8); align-items: start;">
+
+        <!-- Grid de números -->
+        <div>
+          <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-5);">Escolha seus números</h2>
+
+          <!-- Legenda -->
+          <div class="raffle-legend" style="justify-content: flex-start; margin-bottom: var(--space-5);">
+            <div class="legend-item">
+              <div class="legend-swatch" style="background: var(--color-bg-card); border-color: var(--color-border); color: var(--color-border);"></div>
+              <span style="font-size: var(--text-sm);">Disponível</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-swatch" style="background: var(--color-primary); border-color: var(--color-primary); color: var(--color-primary);"></div>
+              <span style="font-size: var(--text-sm);">Selecionado</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-swatch" style="background: var(--color-warning-soft); border-color: var(--color-warning); color: var(--color-warning);"></div>
+              <span style="font-size: var(--text-sm);">Reservado</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-swatch" style="background: var(--color-bg-subtle); border-color: var(--color-border); color: var(--color-border);"></div>
+              <span style="font-size: var(--text-sm);">Vendido</span>
+            </div>
+          </div>
+
+          <!-- Grid -->
+          <div class="raffle-grid" id="raffleGrid">
+            <% for (let i = 0; i <= 1000; i++) { %>
+              <%
+                const taken = takenNumbers[i];
+                const chipClass = taken === 'pago' ? 'pago' : taken === 'reservado' ? 'reservado' : '';
+                const isTaken = !!taken;
+              %>
+              <div
+                class="raffle-chip <%= chipClass %>"
+                data-number="<%= i %>"
+                data-taken="<%= isTaken ? 'true' : 'false' %>"
+                onclick="<%= !isTaken ? 'toggleNumber(' + i + ', this)' : '' %>"
+                title="<%= !isTaken ? 'Clique para selecionar o número ' + i : (taken === 'pago' ? 'Número ' + i + ' já vendido' : 'Número ' + i + ' reservado') %>"
+              >
+                <%= i %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Painel de pedido -->
+        <div style="position: sticky; top: 100px;">
+          <div class="card" style="padding: var(--space-6);">
+            <h3 style="font-family: var(--font-serif); font-size: var(--text-xl); margin-bottom: var(--space-5);">
+              🎰 Meu pedido
+            </h3>
+
+            <!-- Números selecionados -->
+            <div style="min-height: 60px; background: var(--color-bg-warm); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);">
+              <div id="selectedNumbers" class="summary-numbers">
+                <span style="color: var(--color-text-muted); font-size: var(--text-sm);">Nenhum número selecionado ainda...</span>
+              </div>
+            </div>
+
+            <!-- Total -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-3) 0; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-5);">
+              <div>
+                <div style="font-size: var(--text-sm); color: var(--color-text-muted);">Total a pagar</div>
+                <div id="totalPrice" class="summary-total">R$ 0,00</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: var(--text-sm); color: var(--color-text-muted);">Quantidade</div>
+                <div id="totalCount" style="font-size: var(--text-xl); font-weight: 700; color: var(--color-text);">0</div>
+              </div>
+            </div>
+
+            <!-- Form de dados -->
+            <form method="POST" action="/sorteio/reservar" id="raffleForm">
+              <input type="hidden" name="numbers" id="numbersInput" value="">
+
+              <div class="form-group">
+                <label class="form-label" for="raffleNome">Seu nome <span>*</span></label>
+                <input type="text" id="raffleNome" name="name" class="form-control"
+                       placeholder="Como você quer ser chamado?" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="raffleTel">WhatsApp <span>*</span></label>
+                <input type="tel" id="raffleTel" name="phone" class="form-control"
+                       placeholder="(11) 99999-9999" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: var(--space-5);">
+                <label class="form-label" for="raffleEmail">E-mail <span style="color: var(--color-text-muted);">(opcional)</span></label>
+                <input type="email" id="raffleEmail" name="email" class="form-control"
+                       placeholder="seu@email.com">
+              </div>
+
+              <button type="submit" id="raffleSubmitBtn" class="btn btn-accent btn-full btn-lg" disabled onclick="return validateRaffle()">
+                🎰 Pagar e participar
+              </button>
+
+              <p style="text-align: center; font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-3);">
+                Você será redirecionado ao Mercado Pago para finalizar o pagamento.
+                Aceitamos Pix, débito e crédito.
+              </p>
+            </form>
+
+          </div>
+
+          <!-- Regras -->
+          <div class="card" style="padding: var(--space-5); margin-top: var(--space-4); background: var(--color-bg-warm);">
+            <h4 style="font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-3);">📋 Regras do sorteio</h4>
+            <ul style="font-size: var(--text-xs); color: var(--color-text-muted); list-style: disc; padding-left: var(--space-4); line-height: 2;">
+              <li>Números de 0 a 1000</li>
+              <li>Cada número custa R$ <%= pricePerNumber %></li>
+              <li>Sem limite de números por pessoa</li>
+              <li>Pagamento confirma a reserva definitivamente</li>
+              <li>Data e prêmio anunciados em breve</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<%- include('../partials/footer') %>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const pricePerNumber = <%= pricePerNumber %>;
+let selectedNumbers = new Set();
+
+function toggleNumber(num, el) {
+  if (el.classList.contains('taken')) return;
+
+  if (selectedNumbers.has(num)) {
+    selectedNumbers.delete(num);
+    el.classList.remove('selected');
+  } else {
+    selectedNumbers.add(num);
+    el.classList.add('selected');
+    el.classList.add('selecting');
+    setTimeout(() => el.classList.remove('selecting'), 300);
+  }
+  updateSummary();
+}
+
+function updateSummary() {
+  const count = selectedNumbers.size;
+  const total = count * pricePerNumber;
+  const totalStr = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  document.getElementById('totalCount').textContent = count;
+  document.getElementById('totalPrice').textContent = totalStr;
+
+  const container = document.getElementById('selectedNumbers');
+  if (count === 0) {
+    container.innerHTML = '<span style="color: var(--color-text-muted); font-size: var(--text-sm);">Nenhum número selecionado ainda...</span>';
+    document.getElementById('raffleSubmitBtn').disabled = true;
+  } else {
+    const chips = [...selectedNumbers].sort((a,b)=>a-b).map(n =>
+      `<span class="summary-number">${n}</span>`
+    ).join('');
+    container.innerHTML = chips;
+    document.getElementById('raffleSubmitBtn').disabled = false;
+  }
+
+  // Prepara o input hidden
+  document.getElementById('numbersInput').value = '';
+}
+
+function validateRaffle() {
+  if (selectedNumbers.size === 0) {
+    showToast('Selecione pelo menos um número!', 'warning');
+    return false;
+  }
+
+  // Limpa e popula os inputs hidden
+  const form = document.getElementById('raffleForm');
+
+  // Remove inputs antigos
+  form.querySelectorAll('input[name="numbers"]').forEach(i => i.remove());
+
+  // Adiciona um input por número
+  selectedNumbers.forEach(n => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'numbers';
+    input.value = n;
+    form.appendChild(input);
+  });
+
+  return true;
+}
+
+function showToast(msg, type = 'info') {
+  const icons = { success: '✅', error: '⚠️', info: 'ℹ️', warning: '⚠️' };
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><div class="toast-content"><div class="toast-msg">${msg}</div></div>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+</script>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

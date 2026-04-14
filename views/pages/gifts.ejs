@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Presentes | Casa Nova Geovane & Lidiane 🏠</title>
+  <meta name="description" content="Escolha um presente para a família Geovane, Lidiane e Belly. Lista completa com opções para todos os gostos e bolsos.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<%- include('../partials/header') %>
+
+<div class="header-offset">
+
+  <!-- Page Header -->
+  <section class="section-sm" style="background: var(--color-bg-warm); border-bottom: 1px solid var(--color-border);">
+    <div class="container">
+      <div class="section-header" style="margin-bottom: 0;">
+        <span class="section-eyebrow">🎁 Lista completa</span>
+        <h1 class="section-title">Lista de Presentes</h1>
+        <p class="section-subtitle">
+          Cada item foi escolhido com carinho. Compre direto no fornecedor ou contribua com qualquer valor.
+        </p>
+      </div>
+
+      <!-- Status counters -->
+      <div style="display: flex; justify-content: center; gap: var(--space-6); margin-top: var(--space-6); flex-wrap: wrap;">
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-serif); font-size: var(--text-2xl); font-weight: 700; color: var(--color-success);"><%= statusCounts.disponivel %></div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">Disponíveis</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-serif); font-size: var(--text-2xl); font-weight: 700; color: var(--color-warning);"><%= statusCounts.reservado %></div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">Reservados</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-serif); font-size: var(--text-2xl); font-weight: 700; color: var(--color-text-muted);"><%= statusCounts.comprado %></div>
+          <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">Comprados ✅</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtros -->
+  <div class="gifts-header">
+    <div class="container">
+      <form method="GET" action="/presentes" class="gifts-filters">
+
+        <!-- Busca -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" name="busca" class="form-control"
+                 placeholder="Buscar presente..."
+                 value="<%= filters.busca || '' %>">
+        </div>
+
+        <!-- Categoria -->
+        <select name="categoria" class="form-control filter-select" onchange="this.form.submit()">
+          <option value="">Todas categorias</option>
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat.slug %>" <%= filters.categoria === cat.slug ? 'selected' : '' %>>
+              <%= cat.icon %> <%= cat.name %>
+            </option>
+          <% }) %>
+        </select>
+
+        <!-- Ordem -->
+        <select name="ordem" class="form-control filter-select" onchange="this.form.submit()">
+          <option value="prioridade" <%= !filters.ordem || filters.ordem === 'prioridade' ? 'selected' : '' %>>Prioridade</option>
+          <option value="menor-preco" <%= filters.ordem === 'menor-preco' ? 'selected' : '' %>>Menor preço</option>
+          <option value="maior-preco" <%= filters.ordem === 'maior-preco' ? 'selected' : '' %>>Maior preço</option>
+          <option value="nome" <%= filters.ordem === 'nome' ? 'selected' : '' %>>A-Z</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
+
+        <% if (filters.busca || filters.categoria || filters.ordem) { %>
+          <a href="/presentes" class="btn btn-ghost btn-sm">✕ Limpar</a>
+        <% } %>
+
+      </form>
+
+      <!-- Chips de status -->
+      <div style="margin-top: var(--space-3); display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center;">
+        <span style="font-size: var(--text-sm); color: var(--color-text-muted);">Status:</span>
+        <a href="/presentes?<%= new URLSearchParams({...filters, status: ''}).toString() %>"
+           class="filter-chip <%= !filters.status ? 'active' : '' %>">Todos</a>
+        <a href="/presentes?<%= new URLSearchParams({...filters, status: 'disponivel'}).toString() %>"
+           class="filter-chip <%= filters.status === 'disponivel' ? 'active' : '' %>">Disponíveis</a>
+        <a href="/presentes?<%= new URLSearchParams({...filters, status: 'reservado'}).toString() %>"
+           class="filter-chip <%= filters.status === 'reservado' ? 'active' : '' %>">Reservados</a>
+        <a href="/presentes?<%= new URLSearchParams({...filters, status: 'comprado'}).toString() %>"
+           class="filter-chip <%= filters.status === 'comprado' ? 'active' : '' %>">Comprados</a>
+
+        <span class="gifts-count" style="margin-left: auto;">
+          <%= products.length %> item<%= products.length !== 1 ? 's' : '' %> encontrado<%= products.length !== 1 ? 's' : '' %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de produtos -->
+  <section class="section-sm">
+    <div class="container">
+
+      <% if (products.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-icon">🎁</div>
+          <h3>Nenhum presente encontrado</h3>
+          <p>Tente ajustar os filtros ou buscar por outro termo. A lista está cheia de opções incríveis!</p>
+          <a href="/presentes" class="btn btn-primary">Ver todos os presentes</a>
+        </div>
+
+      <% } else { %>
+        <div class="products-grid stagger-children">
+          <% products.forEach(product => {
+            const statusMap = {
+              disponivel: { text: 'Disponível', cls: 'disponivel' },
+              reservado: { text: 'Reservado', cls: 'reservado' },
+              aguardando_validacao: { text: 'Em validação', cls: 'aguardando' },
+              comprado: { text: 'Comprado ✅', cls: 'comprado' }
+            };
+            const st = statusMap[product.status] || statusMap.disponivel;
+          %>
+          <a href="/presentes/<%= product.id %>" class="product-card-link">
+            <div class="card product-card card-img-zoom <%= product.status === 'comprado' ? 'comprado' : '' %>">
+
+              <!-- Badges superiores -->
+              <div class="product-badges">
+                <% if (product.badge === 'mais-desejado') { %>
+                  <span class="badge badge-mais-desejado">⭐ Mais desejado</span>
+                <% } else if (product.badge === 'prioridade') { %>
+                  <span class="badge badge-prioridade">🔴 Prioridade</span>
+                <% } else if (product.badge === 'quase-resolvido') { %>
+                  <span class="badge badge-quase-resolvido">✅ Quase!</span>
+                <% } %>
+              </div>
+
+              <!-- Status badge -->
+              <div class="product-status-float" style="position: absolute; top: var(--space-3); right: var(--space-3); z-index: 2;">
+                <span class="badge badge-<%= st.cls %> badge-dot"><%= st.text %></span>
+              </div>
+
+              <!-- Imagem -->
+              <div class="product-img-placeholder" style="font-size: 3.5rem; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; background: var(--color-bg-subtle); position: relative;">
+                <%= product.category_icon || '🎁' %>
+                <% if (product.status === 'comprado') { %>
+                  <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; font-size: 3rem;">✅</div>
+                <% } %>
+              </div>
+
+              <!-- Info -->
+              <div class="product-body">
+                <p class="product-category">
+                  <%= product.category_icon %> <%= product.category_name || 'Outros' %>
+                </p>
+                <h3 class="product-name"><%= product.name %></h3>
+                <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                  <%= product.description %>
+                </p>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div class="product-price">
+                    R$ <%= parseFloat(product.price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                  </div>
+                  <span style="font-size: var(--text-sm); color: var(--color-primary); font-weight: 600;">
+                    <%= product.status === 'comprado' ? 'Ver detalhes' : 'Presentear →' %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </a>
+          <% }) %>
+        </div>
+      <% } %>
+
+    </div>
+  </section>
+
+  <!-- Banner contribuição livre -->
+  <section class="section-sm" style="background: var(--color-bg-warm);">
+    <div class="container">
+      <div class="goal-preview" style="text-align: center;">
+        <h2 style="font-family: var(--font-serif); color: white; font-size: var(--text-2xl); margin-bottom: var(--space-3);">
+          Prefere contribuir com qualquer valor?
+        </h2>
+        <p style="color: rgba(255,255,255,0.75); margin-bottom: var(--space-6);">
+          Aceita Pix, débito, crédito e parcelamento. Qualquer valor é recebido com muito carinho! 💝
+        </p>
+        <a href="<%= settings.mercadopago_link || '#' %>" target="_blank" class="btn btn-outline-white btn-lg">
+          💳 Contribuir via Mercado Pago
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<%- include('../partials/footer') %>
+
+<!-- CTA Flutuante Mobile -->
+<div class="floating-cta">
+  <a href="<%= settings.mercadopago_link || '#' %>" target="_blank" class="btn btn-secondary" style="flex: 1;">
+    💝 Contribuir
+  </a>
+  <a href="/sorteio" class="btn btn-accent" style="flex: 1;">
+    🎰 Sorteio
+  </a>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

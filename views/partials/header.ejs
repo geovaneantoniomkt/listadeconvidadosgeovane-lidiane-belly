@@ -1,0 +1,51 @@
+<!-- ================================================
+     HEADER / NAVEGAÇÃO PRINCIPAL
+     ================================================ -->
+<header class="site-header" id="siteHeader">
+  <div class="container">
+    <div class="header-inner">
+
+      <!-- Logo -->
+      <a href="/" class="site-logo">
+        <div class="logo-icon">🏠</div>
+        <div class="logo-text">
+          <span class="logo-name">Geovane & Lidiane</span>
+          <span class="logo-tagline">Casa Nova 2024</span>
+        </div>
+      </a>
+
+      <!-- Nav Desktop -->
+      <nav class="site-nav">
+        <a href="/" class="nav-link <%= page === 'home' ? 'active' : '' %>">Início</a>
+        <a href="/nossa-historia" class="nav-link <%= page === 'history' ? 'active' : '' %>">Nossa História</a>
+        <a href="/presentes" class="nav-link <%= page === 'gifts' ? 'active' : '' %>">Lista de Presentes</a>
+        <a href="/meta" class="nav-link <%= page === 'goal' ? 'active' : '' %>">Nossa Meta</a>
+        <a href="/sorteio" class="nav-link <%= page === 'raffle' ? 'active' : '' %>">Sorteio</a>
+      </nav>
+
+      <!-- Actions Desktop -->
+      <div class="nav-actions">
+        <a href="/presentes" class="btn btn-primary btn-sm">Ver presentes 🎁</a>
+      </div>
+
+      <!-- Mobile toggle -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="/" class="mobile-nav-link">🏠 Início</a>
+  <a href="/nossa-historia" class="mobile-nav-link">💕 Nossa História</a>
+  <a href="/presentes" class="mobile-nav-link">🎁 Lista de Presentes</a>
+  <a href="/meta" class="mobile-nav-link">🎯 Nossa Meta</a>
+  <a href="/sorteio" class="mobile-nav-link">🎰 Sorteio</a>
+  <div class="mobile-nav-divider"></div>
+  <a href="/presentes" class="btn btn-primary btn-full">Ver lista completa 🎁</a>
+</div>

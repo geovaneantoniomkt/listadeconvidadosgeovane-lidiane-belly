@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= product ? 'Editar' : 'Novo' %> Produto | Admin</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/pages/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-wrapper">
+  <%- include('./sidebar', { currentPage: 'products' }) %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title"><%= product ? 'Editar Produto' : 'Novo Produto' %></h1>
+      <div class="admin-topbar-actions">
+        <a href="/admin/produtos" class="btn btn-ghost btn-sm">← Voltar</a>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="admin-section">
+        <div class="admin-section-body">
+          <form method="POST"
+                action="<%= product ? '/admin/produtos/' + product.id : '/admin/produtos' %>"
+                enctype="multipart/form-data"
+                class="admin-form">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nome do produto <span>*</span></label>
+                <input type="text" name="name" class="form-control" required
+                       value="<%= product ? product.name : '' %>" placeholder="Ex: Sofá 3 Lugares">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Categoria</label>
+                <select name="category_id" class="form-control">
+                  <option value="">Sem categoria</option>
+                  <% categories.forEach(cat => { %>
+                  <option value="<%= cat.id %>" <%= product && product.category_id == cat.id ? 'selected' : '' %>>
+                    <%= cat.icon %> <%= cat.name %>
+                  </option>
+                  <% }) %>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Preço estimado (R$) <span>*</span></label>
+                <input type="number" name="price" class="form-control" required step="0.01" min="0"
+                       value="<%= product ? product.price : '' %>" placeholder="0,00">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-control">
+                  <option value="disponivel" <%= !product || product.status === 'disponivel' ? 'selected' : '' %>>Disponível</option>
+                  <option value="reservado" <%= product && product.status === 'reservado' ? 'selected' : '' %>>Reservado</option>
+                  <option value="aguardando_validacao" <%= product && product.status === 'aguardando_validacao' ? 'selected' : '' %>>Aguardando validação</option>
+                  <option value="comprado" <%= product && product.status === 'comprado' ? 'selected' : '' %>>Comprado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Badge especial</label>
+                <select name="badge" class="form-control">
+                  <option value="">Sem badge</option>
+                  <option value="prioridade" <%= product && product.badge === 'prioridade' ? 'selected' : '' %>>🔴 Prioridade</option>
+                  <option value="mais-desejado" <%= product && product.badge === 'mais-desejado' ? 'selected' : '' %>>⭐ Mais desejado</option>
+                  <option value="quase-resolvido" <%= product && product.badge === 'quase-resolvido' ? 'selected' : '' %>>✅ Quase resolvido</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">
+                  <input type="checkbox" name="priority" value="1" <%= product && product.priority ? 'checked' : '' %> style="margin-right: 8px;">
+                  Produto prioritário (aparece em destaque)
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descrição curta</label>
+              <textarea name="description" class="form-control" rows="2"
+                        placeholder="Descrição objetiva do produto"><%= product ? product.description || '' : '' %></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Texto criativo (tom divertido para a página do produto)</label>
+              <textarea name="creative_text" class="form-control" rows="4"
+                        placeholder="Ex: A Lidiane sonha com essa geladeira há dois anos..."><%= product ? product.creative_text || '' : '' %></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Especificações técnicas (JSON)</label>
+              <textarea name="specs" class="form-control" rows="6"
+                        placeholder='{"Tamanho": "3 lugares", "Material": "Suede", "Modelo exato": "XYZ 123"}'
+                        style="font-family: monospace; font-size: var(--text-sm);"><%= product ? product.specs || '{}' : '{}' %></textarea>
+              <p class="form-hint">Formato JSON. Use "Modelo exato" para destacar o modelo correto.</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Fornecedores (JSON)</label>
+              <textarea name="suppliers" class="form-control" rows="4"
+                        placeholder='[{"name": "Magazine Luiza", "url": "https://...", "price": 1299.00}]'
+                        style="font-family: monospace; font-size: var(--text-sm);"><%= product ? product.suppliers || '[]' : '[]' %></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Imagem do produto</label>
+              <input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp">
+              <% if (product && product.image_url) { %>
+                <p class="form-hint">Imagem atual: <%= product.image_url %></p>
+              <% } %>
+            </div>
+
+            <div style="display: flex; gap: var(--space-3); margin-top: var(--space-4);">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <%= product ? '💾 Salvar alterações' : '➕ Criar produto' %>
+              </button>
+              <a href="/admin/produtos" class="btn btn-ghost btn-lg">Cancelar</a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

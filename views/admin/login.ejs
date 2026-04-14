@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Casa Nova</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/pages/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-login-page">
+  <div class="login-card fade-in">
+    <div class="login-logo">
+      <div class="logo-icon" style="margin: 0 auto var(--space-3);">🏠</div>
+      <div class="logo-name" style="font-family: var(--font-serif); font-size: var(--text-xl); text-align: center;">Painel Administrativo</div>
+      <div style="font-size: var(--text-sm); color: var(--color-text-muted); text-align: center; margin-top: 4px;">Casa Nova Geovane & Lidiane</div>
+    </div>
+
+    <% if (flash && flash.error && flash.error.length > 0) { %>
+      <div class="alert alert-error" style="margin-bottom: var(--space-5);">⚠️ <%= flash.error[0] %></div>
+    <% } %>
+    <% if (flash && flash.success && flash.success.length > 0) { %>
+      <div class="alert alert-success" style="margin-bottom: var(--space-5);">✅ <%= flash.success[0] %></div>
+    <% } %>
+
+    <form method="POST" action="/admin/login">
+      <div class="form-group">
+        <label class="form-label" for="username">Usuário</label>
+        <input type="text" id="username" name="username" class="form-control"
+               placeholder="Seu usuário" autocomplete="username" required>
+      </div>
+      <div class="form-group" style="margin-bottom: var(--space-6);">
+        <label class="form-label" for="password">Senha</label>
+        <input type="password" id="password" name="password" class="form-control"
+               placeholder="Sua senha" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full btn-lg">
+        🔐 Entrar no painel
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: var(--space-6);">
+      <a href="/" style="font-size: var(--text-sm); color: var(--color-text-muted);">← Voltar ao site</a>
+    </div>
+  </div>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

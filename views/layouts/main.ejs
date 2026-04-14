@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO -->
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' | ' : '' %>Casa Nova Geovane & Lidiane 🏠</title>
+  <meta name="description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : 'A lista de presentes de casa nova da família Geovane, Lidiane e Belly. Ajude a gente a construir nosso lar com amor!' %>">
+  <meta name="theme-color" content="#3D5A4A">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Casa Nova Geovane & Lidiane 🏠">
+  <meta property="og:description" content="Nossa lista de presentes de casa nova. Cada presente é um pedacinho do nosso lar.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= siteUrl || 'http://localhost:3000' %>">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/main.css">
+  <% if (typeof adminPage !== 'undefined' && adminPage) { %>
+  <link rel="stylesheet" href="/css/pages/admin.css">
+  <% } %>
+
+  <%- typeof extraHead !== 'undefined' ? extraHead : '' %>
+</head>
+<body class="<%= typeof adminPage !== 'undefined' && adminPage ? 'admin-body' : '' %>">
+
+  <%- body %>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="/js/main.js"></script>
+  <% if (typeof adminPage !== 'undefined' && adminPage) { %>
+  <script src="/js/admin.js"></script>
+  <% } %>
+
+  <%- typeof extraScripts !== 'undefined' ? extraScripts : '' %>
+</body>
+</html>

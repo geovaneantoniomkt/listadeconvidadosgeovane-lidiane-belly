@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= product.name %> | Lista de Presentes — Casa Nova</title>
+  <meta name="description" content="<%= product.description || 'Presente da lista de casa nova de Geovane e Lidiane.' %>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<%- include('../partials/header') %>
+
+<div class="header-offset section-sm">
+<div class="container">
+
+  <!-- Flash messages -->
+  <% if (flash && flash.error && flash.error.length > 0) { %>
+    <div class="alert alert-error">⚠️ <%= flash.error[0] %></div>
+  <% } %>
+  <% if (flash && flash.success && flash.success.length > 0) { %>
+    <div class="alert alert-success">✅ <%= flash.success[0] %></div>
+  <% } %>
+
+  <!-- Breadcrumb -->
+  <nav class="product-breadcrumb">
+    <a href="/">Início</a>
+    <span>›</span>
+    <a href="/presentes">Lista de Presentes</a>
+    <span>›</span>
+    <span style="color: var(--color-text)"><%= product.name %></span>
+  </nav>
+
+  <!-- Layout produto -->
+  <div class="product-layout">
+
+    <!-- Galeria -->
+    <div class="product-gallery fade-in slide-in-left">
+      <div class="product-main-image">
+        <% if (product.image_url && !product.image_url.includes('placeholder')) { %>
+          <img src="<%= product.image_url %>" alt="<%= product.name %>" style="width:100%; height:100%; object-fit:cover;">
+        <% } else { %>
+          <%= product.category_icon || '🎁' %>
+        <% } %>
+      </div>
+
+      <!-- Status -->
+      <%
+        const statusMap = {
+          disponivel: { text: '🟢 Disponível para presentear', cls: 'success', desc: 'Esse presente ainda está disponível! Seja o primeiro a escolhê-lo.' },
+          reservado: { text: '🟡 Reservado', cls: 'warning', desc: 'Alguém já está providenciando esse presente. Obrigado!' },
+          aguardando_validacao: { text: '🔵 Aguardando validação', cls: 'info', desc: 'Um comprovante foi enviado e está sendo analisado.' },
+          comprado: { text: '✅ Já foi comprado!', cls: 'success', desc: 'Esse presente já foi conquistado pela família. Uhuuu! 🎉' }
+        };
+        const st = statusMap[product.status] || statusMap.disponivel;
+      %>
+      <div class="alert alert-<%= st.cls %>">
+        <strong><%= st.text %></strong><br>
+        <span style="font-weight: 400;"><%= st.desc %></span>
+      </div>
+
+      <!-- Compartilhar -->
+      <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2);">
+        <a href="https://wa.me/?text=Veja%20esse%20presente%20na%20lista%20de%20casa%20nova%20do%20Geovane%20e%20Lidiane!%20🏠"
+           target="_blank" class="btn btn-outline btn-sm" style="flex: 1;">
+          💬 Compartilhar no WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <!-- Informações -->
+    <div class="product-info fade-in slide-in-right">
+
+      <!-- Eyebrow e badges -->
+      <div class="product-info product-eyebrow">
+        <span class="badge" style="background: var(--color-bg-subtle); color: var(--color-text-muted);">
+          <%= product.category_icon %> <%= product.category_name %>
+        </span>
+        <% if (product.badge === 'mais-desejado') { %>
+          <span class="badge badge-mais-desejado">⭐ Mais desejado</span>
+        <% } else if (product.badge === 'prioridade') { %>
+          <span class="badge badge-prioridade">🔴 Prioridade</span>
+        <% } else if (product.badge === 'quase-resolvido') { %>
+          <span class="badge badge-quase-resolvido">✅ Quase resolvido!</span>
+        <% } %>
+      </div>
+
+      <h1 class="product-info product-title"><%= product.name %></h1>
+
+      <!-- Preço -->
+      <div class="product-info product-price-block">
+        <div>
+          <div class="product-price-label">Valor estimado</div>
+          <div class="product-price-value">
+            R$ <%= parseFloat(product.price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+          </div>
+        </div>
+        <div style="margin-left: auto; font-size: var(--text-xs); color: var(--color-text-muted); text-align: right;">
+          Pix, débito<br>crédito ou parcelado
+        </div>
+      </div>
+
+      <!-- Texto criativo -->
+      <% if (product.creative_text) { %>
+      <div class="product-creative">
+        <p>"<%= product.creative_text %>"</p>
+      </div>
+      <% } else { %>
+      <p style="color: var(--color-text-secondary); margin-bottom: var(--space-6); line-height: 1.75;">
+        <%= product.description %>
+      </p>
+      <% } %>
+
+      <!-- Aviso de modelo exato -->
+      <% if (product.specs && product.specs['Modelo exato'] || product.specs && product.specs['Modelo']) { %>
+      <div class="model-warning">
+        <div class="model-warning-icon">⚠️</div>
+        <div class="model-warning-text">
+          <strong>Atenção:</strong> Por favor, compre exatamente o modelo especificado nas especificações abaixo.
+          Isso garante que o presente vai se encaixar perfeitamente nas necessidades da família.
+        </div>
+      </div>
+      <% } %>
+
+      <!-- Especificações -->
+      <% if (product.specs && Object.keys(product.specs).length > 0) { %>
+      <div style="margin-bottom: var(--space-6);">
+        <h3 style="font-size: var(--text-base); font-family: var(--font-sans); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--color-text);">
+          📋 Especificações
+        </h3>
+        <table class="specs-table">
+          <% Object.entries(product.specs).forEach(([key, val]) => { %>
+          <tr>
+            <td><%= key %></td>
+            <td>
+              <% if (key.toLowerCase().includes('modelo')) { %>
+                <strong style="color: var(--color-primary);"><%= val %></strong>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </table>
+      </div>
+      <% } %>
+
+      <!-- Como presentear -->
+      <% if (product.status === 'comprado') { %>
+
+        <div class="alert alert-success" style="margin-bottom: var(--space-6);">
+          <div>
+            <strong>✅ Presente já conquistado!</strong><br>
+            Alguém já presenteou a família com esse item incrível. Que amor!
+            <br><br>
+            <a href="/presentes" style="color: var(--color-success); font-weight: 600;">Ver outros presentes disponíveis →</a>
+          </div>
+        </div>
+
+      <% } else if (product.status === 'reservado' || product.status === 'aguardando_validacao') { %>
+
+        <div class="alert alert-warning" style="margin-bottom: var(--space-6);">
+          <div>
+            <strong>🟡 Esse presente está sendo processado</strong><br>
+            Alguém está cuidando disso! Mas se quiser garantir o seu,
+            <a href="/presentes" style="color: var(--color-warning); font-weight: 600;">veja outros disponíveis</a>.
+          </div>
+        </div>
+
+      <% } else { %>
+
+        <!-- FORMAS DE PRESENTEAR -->
+        <div class="contribution-section">
+          <h3>🎁 Como você quer presentear a família?</h3>
+          <p>Escolha a forma mais conveniente para você. Toda ajuda é bem-vinda!</p>
+
+          <div class="contribution-ways">
+
+            <!-- Opção 1: Mercado Pago -->
+            <div class="contribution-way">
+              <div class="contribution-way-header">
+                <div class="contribution-way-number">1</div>
+                <div class="contribution-way-title">💳 Contribuir via Mercado Pago</div>
+              </div>
+              <p>
+                Contribua com qualquer valor pelo Mercado Pago.
+                Aceita Pix, débito, crédito à vista ou parcelado.
+                100% seguro e rápido!
+              </p>
+              <a href="<%= settings.mercadopago_link || '#' %>"
+                 target="_blank"
+                 class="btn btn-primary btn-full"
+                 onclick="showToast('Abrindo Mercado Pago...', 'info')">
+                💳 Pagar via Mercado Pago
+              </a>
+            </div>
+
+            <!-- Opção 2: Fornecedores -->
+            <% if (product.suppliers && product.suppliers.length > 0) { %>
+            <div class="contribution-way">
+              <div class="contribution-way-header">
+                <div class="contribution-way-number" style="background: var(--color-secondary);">2</div>
+                <div class="contribution-way-title">🛍️ Comprar direto no fornecedor</div>
+              </div>
+              <p>
+                Compre diretamente na loja e envie o comprovante para nós.
+                <strong>Atenção: compre exatamente o modelo especificado.</strong>
+              </p>
+              <div class="supplier-buttons">
+                <% product.suppliers.forEach(supplier => { %>
+                <a href="<%= supplier.url %>"
+                   target="_blank"
+                   class="supplier-btn"
+                   onclick="showSupplierPopup('<%= supplier.name %>', '<%= supplier.url %>', event)">
+                  <span>🏪 <%= supplier.name %></span>
+                  <% if (supplier.price) { %>
+                    <span class="supplier-price">R$ <%= parseFloat(supplier.price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></span>
+                  <% } %>
+                </a>
+                <% }) %>
+              </div>
+            </div>
+            <% } %>
+
+          </div>
+        </div>
+
+        <!-- Enviar comprovante -->
+        <div class="receipt-section">
+          <div style="font-size: 2rem; margin-bottom: var(--space-3);">📎</div>
+          <h3 style="font-family: var(--font-serif); font-size: var(--text-xl); margin-bottom: var(--space-2); color: var(--color-primary);">
+            Comprou no fornecedor?
+          </h3>
+          <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-5);">
+            Envie o comprovante para confirmar sua compra. Depois de verificado,
+            seu nome fica registrado nesse presente para sempre. 💚
+          </p>
+          <button class="btn btn-outline" onclick="openReceiptModal()">
+            📎 Enviar meu comprovante
+          </button>
+        </div>
+
+      <% } %>
+
+    </div>
+  </div>
+
+  <!-- Produtos relacionados -->
+  <% if (related && related.length > 0) { %>
+  <div style="margin-top: var(--space-16);">
+    <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-8);">
+      Veja outros da mesma categoria
+    </h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6);">
+      <% related.forEach(rel => { %>
+      <a href="/presentes/<%= rel.id %>" class="product-card-link">
+        <div class="card product-card card-img-zoom">
+          <div class="product-img-placeholder" style="font-size: 3rem; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; background: var(--color-bg-subtle);">
+            <%= rel.category_icon || '🎁' %>
+          </div>
+          <div class="product-body">
+            <h3 class="product-name" style="font-size: var(--text-base)"><%= rel.name %></h3>
+            <div class="product-price" style="font-size: var(--text-lg)">
+              R$ <%= parseFloat(rel.price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+            </div>
+          </div>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════
+     MODAL — Envio de Comprovante
+     ═══════════════════════════════ -->
+<div class="modal-overlay" id="receiptModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title">📎 Enviar Comprovante</h2>
+        <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: 4px;">
+          Preencha os dados abaixo e anexe o comprovante de compra.
+        </p>
+      </div>
+      <button class="modal-close" onclick="closeModal('receiptModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form method="POST"
+            action="/presentes/<%= product.id %>/comprovante"
+            enctype="multipart/form-data"
+            id="receiptForm">
+
+        <div class="form-group">
+          <label class="form-label" for="name">Nome completo <span>*</span></label>
+          <input type="text" id="name" name="name" class="form-control"
+                 placeholder="Como você quer ser lembrado(a)?" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="phone">Telefone/WhatsApp <span>*</span></label>
+          <input type="tel" id="phone" name="phone" class="form-control"
+                 placeholder="(11) 99999-9999" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">E-mail <span style="color: var(--color-text-muted);">(opcional)</span></label>
+          <input type="email" id="email" name="email" class="form-control"
+                 placeholder="seu@email.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Comprovante <span>*</span></label>
+          <div class="upload-area" id="uploadArea" onclick="document.getElementById('comprovante').click()">
+            <div class="upload-icon">📎</div>
+            <p class="upload-text">Clique para selecionar o arquivo</p>
+            <p class="upload-hint">JPG, PNG ou PDF • Máximo 10MB</p>
+            <input type="file" id="comprovante" name="comprovante"
+                   accept=".jpg,.jpeg,.png,.pdf,.webp" required
+                   onchange="updateUploadArea(this)">
+          </div>
+          <div id="filePreview" style="display:none; margin-top: var(--space-2);">
+            <div class="alert alert-success">✅ <span id="fileName"></span></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="notes">Observação <span style="color: var(--color-text-muted);">(opcional)</span></label>
+          <textarea id="notes" name="notes" class="form-control" rows="2"
+                    placeholder="Ex: Comprei na Casas Bahia, o modelo exato que estava na lista!"></textarea>
+        </div>
+
+        <div class="alert alert-info">
+          ℹ️ Após o envio, o presente ficará como <strong>"Aguardando Validação"</strong>.
+          A família vai verificar e confirmar em breve! 💚
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top: var(--space-4);">
+          📎 Enviar comprovante
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL — Aviso de fornecedor externo -->
+<div class="modal-overlay" id="supplierModal">
+  <div class="modal" style="max-width: 420px;">
+    <div class="modal-header">
+      <h2 class="modal-title">🛍️ Comprando no fornecedor</h2>
+      <button class="modal-close" onclick="closeModal('supplierModal')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: var(--space-4);">🤝</div>
+      <p style="font-size: var(--text-base); color: var(--color-text-secondary); line-height: 1.7; margin-bottom: var(--space-6);">
+        Que ótimo! Você vai ser redirecionado(a) para o site da loja.
+        <br><br>
+        Depois de comprar, <strong>não esqueça de voltar aqui e enviar o comprovante</strong>
+        para a gente registrar seu presente com seu nome. 💚
+        <br><br>
+        <em>Importante: compre <strong>exatamente o modelo</strong> especificado na lista!</em>
+      </p>
+      <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+        <button class="btn btn-primary btn-full btn-lg" id="supplierConfirmBtn" onclick="confirmSupplierRedirect()">
+          🛍️ Ir para a loja
+        </button>
+        <button class="btn btn-ghost" onclick="closeModal('supplierModal')">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
+
+<!-- CTA Flutuante Mobile -->
+<% if (product.status === 'disponivel') { %>
+<div class="floating-cta">
+  <a href="<%= settings.mercadopago_link || '#' %>" target="_blank" class="btn btn-secondary" style="flex: 1;">
+    💳 Contribuir
+  </a>
+  <button class="btn btn-primary" style="flex: 1;" onclick="openReceiptModal()">
+    📎 Enviar comprovante
+  </button>
+</div>
+<% } %>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+let currentSupplierUrl = '';
+
+function openReceiptModal() {
+  document.getElementById('receiptModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function showSupplierPopup(name, url, event) {
+  event.preventDefault();
+  currentSupplierUrl = url;
+  document.getElementById('supplierModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function confirmSupplierRedirect() {
+  closeModal('supplierModal');
+  setTimeout(() => {
+    window.open(currentSupplierUrl, '_blank');
+    setTimeout(() => openReceiptModal(), 1500);
+  }, 300);
+}
+
+function updateUploadArea(input) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('filePreview').style.display = 'block';
+    document.querySelector('.upload-text').textContent = 'Arquivo selecionado!';
+    document.getElementById('uploadArea').style.borderColor = 'var(--color-success)';
+    document.getElementById('uploadArea').style.background = 'var(--color-success-soft)';
+  }
+}
+
+function showToast(msg, type = 'info') {
+  const icons = { success: '✅', error: '⚠️', info: 'ℹ️', warning: '⚠️' };
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><div class="toast-content"><div class="toast-msg">${msg}</div></div>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// Fechar modal clicando fora
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal(overlay.id);
+  });
+});
+</script>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprovantes | Admin</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/pages/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-wrapper">
+  <%- include('./sidebar', { currentPage: 'receipts' }) %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Comprovantes</h1>
+    </div>
+
+    <div class="admin-content">
+      <% if (flash && flash.success && flash.success.length > 0) { %>
+        <div class="alert alert-success"><%= flash.success[0] %></div>
+      <% } %>
+
+      <% if (receipts.length === 0) { %>
+        <div class="admin-section">
+          <div class="empty-state">
+            <div class="empty-icon">📎</div>
+            <h3>Nenhum comprovante ainda</h3>
+            <p>Quando os convidados enviarem comprovantes de compra, eles aparecerão aqui para aprovação.</p>
+          </div>
+        </div>
+      <% } %>
+
+      <% receipts.forEach(r => { %>
+      <div class="receipt-card <%= r.status %>">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap;">
+
+          <div style="flex: 1;">
+            <div style="display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3); flex-wrap: wrap;">
+              <span class="badge badge-<%= r.status === 'aguardando' ? 'reservado' : r.status === 'aprovado' ? 'disponivel' : 'comprado' %>">
+                <%= r.status === 'aguardando' ? '⏳ Aguardando' : r.status === 'aprovado' ? '✅ Aprovado' : '❌ Rejeitado' %>
+              </span>
+              <span style="font-weight: 600; font-size: var(--text-base);">
+                🎁 <%= r.product_name %>
+              </span>
+              <span style="font-size: var(--text-sm); color: var(--color-text-muted);">
+                R$ <%= parseFloat(r.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+              </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-bottom: var(--space-4);">
+              <div>
+                <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">Enviado por</div>
+                <div style="font-weight: 600;"><%= r.name %></div>
+              </div>
+              <div>
+                <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">Telefone</div>
+                <div><%= r.phone %></div>
+              </div>
+              <div>
+                <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">E-mail</div>
+                <div><%= r.email || '—' %></div>
+              </div>
+            </div>
+
+            <% if (r.notes) { %>
+            <div style="background: var(--color-bg-warm); border-radius: var(--radius-sm); padding: var(--space-3); font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-3);">
+              💬 <%= r.notes %>
+            </div>
+            <% } %>
+
+            <div style="display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap;">
+              <a href="/uploads/receipts/<%= r.file_path.split('/').pop() %>"
+                 target="_blank" class="btn btn-outline btn-sm">
+                📎 Ver comprovante
+              </a>
+              <span style="font-size: var(--text-xs); color: var(--color-text-muted);">
+                Enviado em: <%= new Date(r.created_at).toLocaleDateString('pt-BR') %>
+              </span>
+            </div>
+
+            <% if (r.admin_notes) { %>
+            <div style="margin-top: var(--space-3); font-size: var(--text-sm); color: var(--color-error);">
+              ⚠️ Nota admin: <%= r.admin_notes %>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Ações -->
+          <% if (r.status === 'aguardando') { %>
+          <div style="display: flex; flex-direction: column; gap: var(--space-2); flex-shrink: 0;">
+            <form method="POST" action="/admin/comprovantes/<%= r.id %>/aprovar" style="margin: 0;">
+              <button type="submit" class="btn btn-primary btn-sm">✅ Aprovar</button>
+            </form>
+            <button class="btn btn-ghost btn-sm" style="color: var(--color-error);"
+                    onclick="showRejectForm(<%= r.id %>)">
+              ❌ Rejeitar
+            </button>
+          </div>
+          <% } %>
+
+        </div>
+
+        <!-- Form de rejeição (oculto) -->
+        <div id="reject-<%= r.id %>" style="display: none; margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border);">
+          <form method="POST" action="/admin/comprovantes/<%= r.id %>/rejeitar">
+            <div class="form-group">
+              <label class="form-label">Motivo da rejeição (opcional)</label>
+              <textarea name="admin_notes" class="form-control" rows="2"
+                        placeholder="Ex: Comprovante ilegível, modelo errado..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-sm">Confirmar rejeição</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="hideRejectForm(<%= r.id %>)">Cancelar</button>
+          </form>
+        </div>
+      </div>
+      <% }) %>
+
+    </div>
+  </main>
+</div>
+
+<script>
+function showRejectForm(id) {
+  document.getElementById('reject-' + id).style.display = 'block';
+}
+function hideRejectForm(id) {
+  document.getElementById('reject-' + id).style.display = 'none';
+}
+</script>
+<script src="/js/main.js"></script>
+</body>
+</html>
