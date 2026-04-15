@@ -5,87 +5,83 @@
 (function () {
   'use strict';
 
-  const WELCOME_DELAY = 4000;       // 4 segundos após entrar
-  const SESSION_KEY = 'popup_shown'; // Key do sessionStorage
+  const WELCOME_DELAY   = 4000;                    // 4s após entrar na página
+  const WELCOME_LS_KEY  = 'casa_welcome_seen';     // localStorage: mostra 1x por usuário
+  const EXIT_SS_KEY     = 'casa_exit_seen';        // sessionStorage: mostra 1x por sessão
 
-  // Evita mostrar o popup mais de uma vez por sessão
-  function hasSeenPopup(key) {
-    return sessionStorage.getItem(key) === '1';
-  }
-
-  function markPopupSeen(key) {
-    sessionStorage.setItem(key, '1');
-  }
-
-  // Abre popup
+  // ─── Helpers ──────────────────────────────────
   window.openPopup = function (id) {
-    const overlay = document.getElementById(id);
-    if (overlay) {
-      overlay.classList.add('active');
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
   };
 
-  // Fecha popup
   window.closePopup = function (id) {
-    const overlay = document.getElementById(id);
-    if (overlay) {
-      overlay.classList.remove('active');
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.remove('active');
       document.body.style.overflow = '';
     }
-    markPopupSeen(id);
+    if (id === 'welcomePopup') localStorage.setItem(WELCOME_LS_KEY, '1');
+    if (id === 'exitPopup')    sessionStorage.setItem(EXIT_SS_KEY, '1');
   };
 
   // ─── POPUP DE BOAS-VINDAS ─────────────────────
+  // Aparece em QUALQUER página, mas apenas 1x por usuário (localStorage)
   function initWelcomePopup() {
     const popup = document.getElementById('welcomePopup');
     if (!popup) return;
-    if (hasSeenPopup('welcomePopup')) return;
+    if (localStorage.getItem(WELCOME_LS_KEY) === '1') return;
 
     setTimeout(() => {
-      openPopup('welcomePopup');
+      // Só abre se o exit popup não estiver ativo
+      if (!document.getElementById('exitPopup')?.classList.contains('active')) {
+        openPopup('welcomePopup');
+      }
     }, WELCOME_DELAY);
 
-    // Fechar clicando fora
     popup.addEventListener('click', (e) => {
       if (e.target === popup) closePopup('welcomePopup');
     });
   }
 
-  // ─── POPUP DE INTENÇÃO DE SAÍDA ───────────────
+  // ─── POPUP DE SAÍDA ───────────────────────────
+  // Aparece APENAS em /presentes e /sorteio, 1x por sessão
   function initExitPopup() {
     const popup = document.getElementById('exitPopup');
     if (!popup) return;
-    if (hasSeenPopup('exitPopup')) return;
+    if (sessionStorage.getItem(EXIT_SS_KEY) === '1') return;
 
     let triggered = false;
 
-    const onMouseLeave = (e) => {
+    function dispararExitPopup() {
       if (triggered) return;
+      // Não mostra se o welcome popup ainda estiver aberto
+      if (document.getElementById('welcomePopup')?.classList.contains('active')) return;
+      triggered = true;
+      openPopup('exitPopup');
+    }
+
+    // Desktop: mouse saindo pelo topo da janela
+    document.addEventListener('mouseleave', (e) => {
       if (e.clientY <= 0 || e.relatedTarget === null) {
-        triggered = true;
-        openPopup('exitPopup');
-      }
-    };
-
-    // Desktop: detecta quando o mouse sai pelo topo
-    document.addEventListener('mouseleave', onMouseLeave);
-
-    // Mobile: detecta visibilidade da página (app switch / home button)
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden && !triggered && !hasSeenPopup('exitPopup')) {
-        triggered = true;
-        openPopup('exitPopup');
+        dispararExitPopup();
       }
     });
 
-    // Fechar clicando fora
+    // Mobile: usuário minimiza o app / troca de aba
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) dispararExitPopup();
+    });
+
     popup.addEventListener('click', (e) => {
       if (e.target === popup) closePopup('exitPopup');
     });
   }
 
-  // Inicia após carregamento
+  // ─── Init ─────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     initWelcomePopup();
     initExitPopup();

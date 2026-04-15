@@ -1,0 +1,34 @@
+<!-- ================================================
+     POPUP 2: Exit intent (apenas em /presentes e /sorteio)
+     ================================================ -->
+<% if (settings && settings.popup_enabled === '1') { %>
+<div class="popup-overlay" id="exitPopup">
+  <div class="popup">
+    <button class="popup-close-x" onclick="closePopup('exitPopup')">✕</button>
+    <div class="popup-emoji">🥺</div>
+    <h2 class="popup-title">Ué, já vai embora?</h2>
+    <p class="popup-text">
+      Tem certeza mesmo? Vai deixar a gente aqui olhando pra lista de
+      presentes sonhando sozinhos? 😅<br><br>
+      Vai dizer que não sobrou nem uma ajudinha
+      pra família garantir pelo menos <strong>um açaí de fim de semana</strong>?
+      A Belly tá torcendo por você! 🍦
+    </p>
+    <div class="popup-actions">
+      <a href="<%= settings.mercadopago_link || '#' %>"
+         target="_blank"
+         class="btn btn-primary btn-full btn-lg"
+         onclick="closePopup('exitPopup')">
+        💚 Tá bom, eu ajudo!
+      </a>
+      <a href="/presentes" class="btn btn-outline btn-full" onclick="closePopup('exitPopup')">
+        Ver presentes primeiro 🎁
+      </a>
+      <button class="btn btn-ghost btn-full"
+              onclick="closePopup('exitPopup')">
+        Agora eu vou mesmo 😭
+      </button>
+    </div>
+  </div>
+</div>
+<% } %>
