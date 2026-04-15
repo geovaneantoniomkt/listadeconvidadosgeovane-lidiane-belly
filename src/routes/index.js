@@ -238,7 +238,20 @@ router.get('/meta', (req, res) => {
 // ────────────────────────────────────────────────
 // SORTEIO
 // ────────────────────────────────────────────────
+
+// Libera reservas expiradas (mais de 30 minutos sem pagamento)
+function liberarReservasExpiradas() {
+  db.prepare(`
+    DELETE FROM raffle_numbers
+    WHERE status = 'reservado'
+    AND payment_status = 'pendente'
+    AND reserved_at < datetime('now', '-30 minutes')
+  `).run();
+}
+
 router.get('/sorteio', (req, res) => {
+  liberarReservasExpiradas();
+
   const settings = getAllSettings();
   const takenNumbers = db.prepare(`
     SELECT number, status FROM raffle_numbers
@@ -249,8 +262,8 @@ router.get('/sorteio', (req, res) => {
   takenNumbers.forEach(n => { takenMap[n.number] = n.status; });
 
   const stats = {
-    total: db.prepare('SELECT COUNT(*) as n FROM raffle_numbers').get().n,
     sold: db.prepare("SELECT COUNT(*) as n FROM raffle_numbers WHERE status = 'pago'").get().n,
+    reserved: db.prepare("SELECT COUNT(*) as n FROM raffle_numbers WHERE status = 'reservado'").get().n,
     available: 1001 - db.prepare('SELECT COUNT(*) as n FROM raffle_numbers').get().n,
   };
 
@@ -266,6 +279,8 @@ router.get('/sorteio', (req, res) => {
 
 // POST — Reservar números do sorteio
 router.post('/sorteio/reservar', (req, res) => {
+  liberarReservasExpiradas();
+
   const { name, phone, email, numbers } = req.body;
 
   if (!name || !phone || !numbers) {
@@ -284,14 +299,14 @@ router.post('/sorteio/reservar', (req, res) => {
   });
 
   if (conflicts.length > 0) {
-    req.flash('error', `Os números ${conflicts.join(', ')} já foram escolhidos. Por favor, selecione outros.`);
+    req.flash('error', `Os números ${conflicts.join(', ')} já foram escolhidos por outra pessoa. Por favor, selecione outros.`);
     return res.redirect('/sorteio');
   }
 
-  // Reserva temporária dos números
+  // Reserva temporária dos números (expira em 30 min)
   const insertRaffle = db.prepare(`
-    INSERT INTO raffle_numbers (number, name, phone, email, status, amount, payment_status)
-    VALUES (?, ?, ?, ?, 'reservado', ?, 'pendente')
+    INSERT INTO raffle_numbers (number, name, phone, email, status, amount, payment_status, reserved_at)
+    VALUES (?, ?, ?, ?, 'reservado', ?, 'pendente', CURRENT_TIMESTAMP)
   `);
 
   const insertMany = db.transaction((nums) => {
@@ -307,13 +322,27 @@ router.post('/sorteio/reservar', (req, res) => {
     return res.redirect('/sorteio');
   }
 
-  // Redireciona para pagamento (Mercado Pago)
+  // Redireciona para página de pagamento com instruções
   const mpLink = getSetting('mercadopago_link') || '#';
-  const redirectUrl = mpLink !== '#'
-    ? `${mpLink}?amount=${totalAmount}`
-    : `/obrigado?tipo=sorteio&nome=${encodeURIComponent(name)}&qtd=${selectedNumbers.length}&total=${totalAmount}`;
+  res.redirect(
+    `/sorteio/pagar?nome=${encodeURIComponent(name.trim())}&phone=${encodeURIComponent(phone.trim())}&qtd=${selectedNumbers.length}&total=${totalAmount}&numeros=${selectedNumbers.join(',')}&mp=${encodeURIComponent(mpLink)}`
+  );
+});
 
-  res.redirect(redirectUrl);
+// GET — Página de pagamento do sorteio
+router.get('/sorteio/pagar', (req, res) => {
+  const { nome, phone, qtd, total, numeros, mp } = req.query;
+  const settings = getAllSettings();
+  res.render('pages/raffle-pay', {
+    settings,
+    nome,
+    phone,
+    qtd: parseInt(qtd) || 1,
+    total: parseFloat(total) || 0,
+    numeros: numeros ? numeros.split(',') : [],
+    mpLink: mp || '#',
+    page: 'raffle'
+  });
 });
 
 // ────────────────────────────────────────────────
