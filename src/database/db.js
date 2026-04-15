@@ -113,9 +113,12 @@ function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_contributions_status ON contributions(payment_status);
   `);
 
-  // Configurações padrão
+  // Configurações padrão (INSERT OR IGNORE — não sobrescreve valores já salvos)
   const insertSetting = db.prepare(`
     INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)
+  `);
+  const updateSetting = db.prepare(`
+    UPDATE settings SET value = ? WHERE key = ?
   `);
 
   insertSetting.run('meta_total', process.env.META_TOTAL || '15000');
@@ -126,7 +129,15 @@ function initializeDatabase() {
   insertSetting.run('site_description', 'Nossa lista de presentes de casa nova. Cada presente é um pedacinho do nosso lar.');
   insertSetting.run('familia_historia', 'Éramos só um casal apaixonado e um sonho grande. Hoje, somos três — e esse lar que estamos construindo tem o cheirinho da Belly e o tempero do nosso amor...');
   insertSetting.run('popup_enabled', '1');
-  insertSetting.run('goal_calculation', 'total'); // 'total' ou 'confirmado'
+  insertSetting.run('goal_calculation', 'total');
+
+  // Sempre sincroniza ENV vars críticas com o banco (garante que Railway ENV tenha prioridade)
+  if (process.env.MERCADOPAGO_LINK_CONTRIBUICAO) {
+    updateSetting.run(process.env.MERCADOPAGO_LINK_CONTRIBUICAO, 'mercadopago_link');
+  }
+  if (process.env.META_TOTAL) {
+    updateSetting.run(process.env.META_TOTAL, 'meta_total');
+  }
 
   console.log('✅ Banco de dados inicializado com sucesso.');
 }
