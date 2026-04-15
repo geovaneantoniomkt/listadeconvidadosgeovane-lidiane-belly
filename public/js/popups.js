@@ -6,7 +6,7 @@
   'use strict';
 
   const WELCOME_DELAY   = 4000;                    // 4s após entrar na página
-  const WELCOME_LS_KEY  = 'casa_welcome_seen';     // localStorage: mostra 1x por usuário
+  const WELCOME_LS_KEY  = 'casa_welcome_date';     // localStorage: data da última exibição
   const EXIT_SS_KEY     = 'casa_exit_seen';        // sessionStorage: mostra 1x por sessão
 
   // ─── Helpers ──────────────────────────────────
@@ -24,7 +24,7 @@
       el.classList.remove('active');
       document.body.style.overflow = '';
     }
-    if (id === 'welcomePopup') localStorage.setItem(WELCOME_LS_KEY, '1');
+    if (id === 'welcomePopup') localStorage.setItem(WELCOME_LS_KEY, new Date().toDateString());
     if (id === 'exitPopup')    sessionStorage.setItem(EXIT_SS_KEY, '1');
   };
 
@@ -33,7 +33,7 @@
   function initWelcomePopup() {
     const popup = document.getElementById('welcomePopup');
     if (!popup) return;
-    if (localStorage.getItem(WELCOME_LS_KEY) === '1') return;
+    if (localStorage.getItem(WELCOME_LS_KEY) === new Date().toDateString()) return;
 
     setTimeout(() => {
       // Só abre se o exit popup não estiver ativo
