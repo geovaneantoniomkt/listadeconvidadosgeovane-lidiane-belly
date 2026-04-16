@@ -346,6 +346,45 @@ router.get('/sorteio/pagar', (req, res) => {
 });
 
 // ────────────────────────────────────────────────
+// CONTRIBUIÇÃO LIVRE
+// ────────────────────────────────────────────────
+router.get('/contribuir', (req, res) => {
+  const settings = getAllSettings();
+  res.render('pages/contribute', { settings, page: 'contribute', flash: req.flash() });
+});
+
+router.post('/contribuir', (req, res) => {
+  const { name, phone, email, amount, message } = req.body;
+
+  if (!name || !phone || !amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+    req.flash('error', 'Preencha nome, telefone e um valor válido.');
+    return res.redirect('/contribuir');
+  }
+
+  const valor = parseFloat(parseFloat(amount).toFixed(2));
+
+  db.prepare(`
+    INSERT INTO contributions (name, phone, email, amount, message, payment_method, payment_status)
+    VALUES (?, ?, ?, ?, ?, 'pix', 'pendente')
+  `).run(name.trim(), phone.trim(), email?.trim() || null, valor, message?.trim() || null);
+
+  const mpLink = getSetting('mercadopago_link') || '#';
+  res.redirect(`/contribuir/pagar?nome=${encodeURIComponent(name.trim())}&valor=${valor}&mp=${encodeURIComponent(mpLink)}`);
+});
+
+router.get('/contribuir/pagar', (req, res) => {
+  const { nome, valor, mp } = req.query;
+  const settings = getAllSettings();
+  res.render('pages/contribute-pay', {
+    settings,
+    nome,
+    valor: parseFloat(valor) || 0,
+    mpLink: mp || '#',
+    page: 'contribute'
+  });
+});
+
+// ────────────────────────────────────────────────
 // PÁGINA DE AGRADECIMENTO
 // ────────────────────────────────────────────────
 router.get('/obrigado', (req, res) => {

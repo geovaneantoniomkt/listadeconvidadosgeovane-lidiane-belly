@@ -190,11 +190,9 @@
                 Aceita Pix, débito, crédito à vista ou parcelado.
                 100% seguro e rápido!
               </p>
-              <a href="<%= settings.mercadopago_link || '#' %>"
-                 target="_blank"
-                 class="btn btn-primary btn-full"
-                 onclick="showToast('Abrindo Mercado Pago...', 'info')">
-                💳 Pagar via Mercado Pago
+              <a href="/contribuir"
+                 class="btn btn-primary btn-full">
+                💳 Contribuir com qualquer valor
               </a>
             </div>
 
@@ -383,7 +381,7 @@
 <!-- CTA Flutuante Mobile -->
 <% if (product.status === 'disponivel') { %>
 <div class="floating-cta">
-  <a href="<%= settings.mercadopago_link || '#' %>" target="_blank" class="btn btn-secondary" style="flex: 1;">
+  <a href="/contribuir" class="btn btn-secondary" style="flex: 1;">
     💳 Contribuir
   </a>
   <button class="btn btn-primary" style="flex: 1;" onclick="openReceiptModal()">

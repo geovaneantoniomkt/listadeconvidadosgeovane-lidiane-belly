@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<%- include('../partials/gtm-head') %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contribuir | Casa Nova Geovane & Lidiane 🏠</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<%- include('../partials/gtm-body') %>
+<%- include('../partials/header') %>
+
+<div class="header-offset section">
+<div class="container">
+<div style="max-width: 520px; margin: 0 auto;">
+
+  <div class="fade-in" style="text-align: center; margin-bottom: var(--space-8);">
+    <div style="font-size: 3rem; margin-bottom: var(--space-4);">💝</div>
+    <h1 style="font-family: var(--font-serif); font-size: var(--text-3xl); margin-bottom: var(--space-3);">
+      Contribuir com qualquer valor
+    </h1>
+    <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+      Qualquer valor é recebido com muito carinho.<br>
+      Preencha seus dados e vá ao Mercado Pago.
+    </p>
+  </div>
+
+  <% if (flash && flash.error && flash.error.length > 0) { %>
+    <div class="alert alert-error" style="margin-bottom: var(--space-5);">⚠️ <%= flash.error[0] %></div>
+  <% } %>
+
+  <div class="card fade-in" style="padding: var(--space-8);">
+    <form method="POST" action="/contribuir">
+
+      <div class="form-group">
+        <label class="form-label" for="name">Seu nome <span>*</span></label>
+        <input type="text" id="name" name="name" class="form-control"
+               placeholder="Como quer ser lembrado(a)?" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phone">WhatsApp <span>*</span></label>
+        <input type="tel" id="phone" name="phone" class="form-control"
+               placeholder="(19) 99999-9999" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">E-mail <span style="color: var(--color-text-muted);">(opcional)</span></label>
+        <input type="email" id="email" name="email" class="form-control"
+               placeholder="seu@email.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="amount">Valor da contribuição (R$) <span>*</span></label>
+        <input type="number" id="amount" name="amount" class="form-control"
+               placeholder="Ex: 50,00" min="1" step="0.01" required>
+        <!-- Atalhos de valor -->
+        <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2);">
+          <% [20, 50, 100, 150, 200].forEach(v => { %>
+            <button type="button"
+              onclick="document.getElementById('amount').value='<%= v %>'"
+              style="background: var(--color-primary-soft); border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: var(--radius-full); padding: 4px 14px; font-size: var(--text-sm); cursor: pointer;">
+              R$ <%= v %>
+            </button>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: var(--space-6);">
+        <label class="form-label" for="message">Mensagem carinhosa <span style="color: var(--color-text-muted);">(opcional)</span></label>
+        <textarea id="message" name="message" class="form-control" rows="2"
+                  placeholder="Ex: Felicidades pra vocês! 🏠💚"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-secondary btn-full btn-lg">
+        💝 Continuar para o pagamento
+      </button>
+
+      <p style="text-align: center; font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-3);">
+        Você será direcionado ao Mercado Pago. Aceita Pix, débito e crédito.
+      </p>
+    </form>
+  </div>
+
+  <div style="text-align: center; margin-top: var(--space-6);">
+    <a href="/" style="font-size: var(--text-sm); color: var(--color-text-muted);">← Voltar ao início</a>
+  </div>
+
+</div>
+</div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body>
+</html>

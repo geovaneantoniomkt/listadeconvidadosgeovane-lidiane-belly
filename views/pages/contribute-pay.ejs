@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<%- include('../partials/gtm-head') %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar Contribuição | Casa Nova Geovane & Lidiane 🏠</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<%- include('../partials/gtm-body') %>
+<%- include('../partials/header') %>
+
+<div class="header-offset section">
+<div class="container">
+<div style="max-width: 520px; margin: 0 auto;">
+
+  <!-- Header -->
+  <div class="fade-in" style="text-align: center; margin-bottom: var(--space-8);">
+    <div style="font-size: 3rem; margin-bottom: var(--space-4);">🎉</div>
+    <h1 style="font-family: var(--font-serif); font-size: var(--text-3xl); margin-bottom: var(--space-3);">
+      Quase lá, <strong><%= nome %>!</strong>
+    </h1>
+    <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+      Sua contribuição foi registrada. Agora é só pagar!
+    </p>
+  </div>
+
+  <!-- Resumo -->
+  <div class="card fade-in" style="padding: var(--space-6); margin-bottom: var(--space-6); background: var(--color-bg-warm); text-align: center;">
+    <div style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2);">Valor a pagar</div>
+    <div style="font-family: var(--font-serif); font-size: clamp(2rem, 6vw, 3rem); font-weight: 700; color: var(--color-success);">
+      R$ <%= valor.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+    </div>
+    <div style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2);">contribuição de <strong><%= nome %></strong></div>
+  </div>
+
+  <!-- Botão de pagamento -->
+  <div class="fade-in" style="margin-bottom: var(--space-6);">
+    <% if (mpLink && mpLink !== '#') { %>
+      <a href="<%= mpLink %>" target="_blank" class="btn btn-secondary btn-full btn-lg" style="font-size: var(--text-xl); padding: var(--space-5);">
+        💳 Pagar R$ <%= valor.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %> agora
+      </a>
+      <p style="text-align: center; font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-3);">
+        Aceita Pix, débito e crédito via Mercado Pago
+      </p>
+    <% } else { %>
+      <div class="alert alert-warning">⚠️ Link de pagamento não configurado. Entre em contato pelo WhatsApp.</div>
+    <% } %>
+  </div>
+
+  <!-- Instruções -->
+  <div class="card fade-in" style="padding: var(--space-6); border-left: 4px solid var(--color-success);">
+    <h3 style="font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-4);">✅ O que acontece depois?</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-3);">
+      <li style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <span style="font-size: 1.25rem;">1️⃣</span>
+        <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Clique em pagar e finalize no Mercado Pago (Pix é instantâneo!)</span>
+      </li>
+      <li style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <span style="font-size: 1.25rem;">2️⃣</span>
+        <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Geovane e Lidiane recebem o pagamento e confirmam sua contribuição</span>
+      </li>
+      <li style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <span style="font-size: 1.25rem;">3️⃣</span>
+        <span style="font-size: var(--text-sm); color: var(--color-text-secondary);">Seu nome aparece na lista de corações que ajudaram na página da meta 💚</span>
+      </li>
+    </ul>
+  </div>
+
+  <div style="text-align: center; margin-top: var(--space-6);">
+    <a href="/contribuir" style="font-size: var(--text-sm); color: var(--color-text-muted);">← Voltar e corrigir os dados</a>
+  </div>
+
+</div>
+</div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body>
+</html>
