@@ -60,8 +60,9 @@ router.get('/dashboard', requireAuth, (req, res) => {
     purchased: db.prepare("SELECT COUNT(*) as n FROM products WHERE status = 'comprado'").get().n,
     pending_receipts: db.prepare("SELECT COUNT(*) as n FROM receipts WHERE status = 'aguardando'").get().n,
     total_contributions: db.prepare("SELECT COALESCE(SUM(amount),0) as total FROM contributions WHERE payment_status='confirmado'").get().total,
-    total_raffle: db.prepare("SELECT COALESCE(SUM(amount),0) as total FROM raffle_numbers WHERE payment_status='confirmado'").get().total,
+    total_raffle: db.prepare("SELECT COALESCE(SUM(amount),0) as total FROM raffle_numbers WHERE payment_status='confirmado' AND status != 'cancelado'").get().total,
     raffle_sold: db.prepare("SELECT COUNT(*) as n FROM raffle_numbers WHERE status='pago'").get().n,
+    raffle_registered: db.prepare("SELECT COUNT(*) as n FROM raffle_numbers WHERE status != 'cancelado'").get().n,
   };
 
   const recentReceipts = db.prepare(`
@@ -266,6 +267,7 @@ router.get('/sorteio', requireAuth, (req, res) => {
       COALESCE(SUM(CASE WHEN status='pago' THEN amount ELSE 0 END),0) as arrecadado,
       COUNT(CASE WHEN status='pago' THEN 1 END) as pagos
     FROM raffle_numbers
+    WHERE status != 'cancelado'
   `).get();
   res.render('admin/raffle', { settings, numbers, totals, flash: req.flash(), page: 'admin-raffle' });
 });

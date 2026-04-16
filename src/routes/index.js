@@ -264,7 +264,7 @@ router.get('/sorteio', (req, res) => {
   const stats = {
     sold: db.prepare("SELECT COUNT(*) as n FROM raffle_numbers WHERE status = 'pago'").get().n,
     reserved: db.prepare("SELECT COUNT(*) as n FROM raffle_numbers WHERE status = 'reservado'").get().n,
-    available: 1001 - db.prepare('SELECT COUNT(*) as n FROM raffle_numbers').get().n,
+    available: 1001 - db.prepare("SELECT COUNT(*) as n FROM raffle_numbers WHERE status != 'cancelado'").get().n,
   };
 
   res.render('pages/raffle', {
