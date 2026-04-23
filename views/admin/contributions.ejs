@@ -26,7 +26,7 @@
       <% } %>
 
       <!-- Totais -->
-      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
         <div class="stat-card success">
           <div class="stat-icon">✅</div>
           <div class="stat-value">R$ <%= parseFloat(totals.confirmado).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
@@ -36,6 +36,11 @@
           <div class="stat-icon">⏳</div>
           <div class="stat-value">R$ <%= parseFloat(totals.pendente).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></div>
           <div class="stat-label">Pendente</div>
+        </div>
+        <div class="stat-card error">
+          <div class="stat-icon">❌</div>
+          <div class="stat-value"><%= totals.cancelado_count %> desistência<%= totals.cancelado_count !== 1 ? 's' : '' %></div>
+          <div class="stat-label">R$ <%= parseFloat(totals.cancelado).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %> não recebido</div>
         </div>
         <div class="stat-card primary">
           <div class="stat-icon">📊</div>
@@ -87,9 +92,15 @@
                 </td>
                 <td>
                   <% if (c.payment_status === 'pendente') { %>
-                  <form method="POST" action="/admin/contribuicoes/<%= c.id %>/confirmar" style="margin: 0;">
-                    <button type="submit" class="btn btn-primary btn-sm">✅ Confirmar</button>
-                  </form>
+                  <div style="display: flex; gap: var(--space-2);">
+                    <form method="POST" action="/admin/contribuicoes/<%= c.id %>/confirmar" style="margin: 0;">
+                      <button type="submit" class="btn btn-primary btn-sm">✅ Confirmar</button>
+                    </form>
+                    <form method="POST" action="/admin/contribuicoes/<%= c.id %>/cancelar" style="margin: 0;"
+                          onsubmit="return confirm('Marcar contribuição de <%= c.name %> como cancelada?')">
+                      <button type="submit" class="btn btn-danger btn-sm">❌ Recusar</button>
+                    </form>
+                  </div>
                   <% } %>
                 </td>
               </tr>

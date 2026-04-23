@@ -113,6 +113,20 @@
   transform: translateY(-1px);
 }
 
+/* Perigo — Vermelho */
+.btn-danger {
+  background: var(--color-error);
+  color: var(--color-text-inverse);
+  border-color: var(--color-error);
+}
+.btn-danger:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: var(--color-text-inverse);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(192, 57, 43, 0.3);
+}
+
 /* Tamanhos */
 .btn-sm {
   padding: 0.5rem 1.25rem;

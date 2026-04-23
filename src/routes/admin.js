@@ -227,7 +227,9 @@ router.get('/contribuicoes', requireAuth, (req, res) => {
   const totals = db.prepare(`
     SELECT
       COALESCE(SUM(CASE WHEN payment_status='confirmado' THEN amount ELSE 0 END),0) as confirmado,
-      COALESCE(SUM(CASE WHEN payment_status='pendente' THEN amount ELSE 0 END),0) as pendente
+      COALESCE(SUM(CASE WHEN payment_status='pendente' THEN amount ELSE 0 END),0) as pendente,
+      COALESCE(SUM(CASE WHEN payment_status='cancelado' THEN amount ELSE 0 END),0) as cancelado,
+      COUNT(CASE WHEN payment_status='cancelado' THEN 1 END) as cancelado_count
     FROM contributions
   `).get();
 
@@ -241,6 +243,16 @@ router.post('/contribuicoes/:id/confirmar', requireAuth, (req, res) => {
     WHERE id=?
   `).run(req.params.id);
   req.flash('success', 'Contribuição confirmada!');
+  res.redirect('/admin/contribuicoes');
+});
+
+router.post('/contribuicoes/:id/cancelar', requireAuth, (req, res) => {
+  db.prepare(`
+    UPDATE contributions
+    SET payment_status='cancelado'
+    WHERE id=?
+  `).run(req.params.id);
+  req.flash('success', 'Contribuição marcada como cancelada.');
   res.redirect('/admin/contribuicoes');
 });
 
