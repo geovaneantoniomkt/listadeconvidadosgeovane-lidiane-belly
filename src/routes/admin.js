@@ -151,6 +151,14 @@ router.post('/produtos/:id', requireAuth, uploadProductImage.single('image'), (r
   res.redirect('/admin/produtos');
 });
 
+router.post('/produtos/:id/status', requireAuth, (req, res) => {
+  const { status } = req.body;
+  const allowed = ['disponivel', 'reservado', 'comprado'];
+  if (!allowed.includes(status)) return res.redirect('/admin/produtos');
+  db.prepare('UPDATE products SET status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?').run(status, req.params.id);
+  res.redirect('/admin/produtos');
+});
+
 router.post('/produtos/:id/excluir', requireAuth, (req, res) => {
   db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
   req.flash('success', 'Produto excluído.');

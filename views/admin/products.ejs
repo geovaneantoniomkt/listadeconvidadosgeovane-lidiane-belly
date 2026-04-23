@@ -59,8 +59,16 @@
                 <td><%= p.category_name || '—' %></td>
                 <td>R$ <%= parseFloat(p.price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></td>
                 <td>
-                  <span class="status-dot <%= p.status === 'aguardando_validacao' ? 'aguardando' : p.status %>"></span>
-                  <%= p.status.replace('_', ' ') %>
+                  <form method="POST" action="/admin/produtos/<%= p.id %>/status" style="margin:0;">
+                    <select name="status" onchange="this.form.submit()" class="status-select status-select-<%= p.status === 'aguardando_validacao' ? 'aguardando' : p.status %>">
+                      <option value="disponivel"  <%= p.status === 'disponivel'  ? 'selected' : '' %>>🟢 Disponível</option>
+                      <option value="reservado"   <%= p.status === 'reservado'   ? 'selected' : '' %>>🟡 Reservado</option>
+                      <option value="comprado"    <%= p.status === 'comprado'    ? 'selected' : '' %>>✅ Comprado</option>
+                      <% if (p.status === 'aguardando_validacao') { %>
+                      <option value="aguardando_validacao" selected disabled>⏳ Aguardando</option>
+                      <% } %>
+                    </select>
+                  </form>
                 </td>
                 <td>
                   <% if (p.badge) { %>

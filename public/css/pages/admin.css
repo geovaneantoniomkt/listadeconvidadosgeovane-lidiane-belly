@@ -186,6 +186,25 @@
 .stat-card.warning { --stat-color: var(--color-warning); }
 .stat-card.error { --stat-color: var(--color-error); }
 
+/* ─── STATUS SELECT ─── */
+.status-select {
+  border: 1px solid #ddd;
+  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
+}
+.status-select-disponivel  { background-color: #d4edda; border-color: #28a745; color: #155724; }
+.status-select-reservado   { background-color: #fff3cd; border-color: #ffc107; color: #856404; }
+.status-select-comprado    { background-color: #cce5ff; border-color: #007bff; color: #004085; }
+.status-select-aguardando  { background-color: #f8d7da; border-color: #dc3545; color: #721c24; }
+
 /* ─── ADMIN SECTIONS ─── */
 .admin-section {
   background: white;
