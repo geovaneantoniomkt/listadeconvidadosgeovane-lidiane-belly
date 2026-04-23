@@ -115,22 +115,35 @@ router.get('/produtos/:id/editar', requireAuth, (req, res) => {
   res.render('admin/product-form', { settings, categories, product, flash: req.flash(), page: 'admin-products' });
 });
 
+function buildSuppliersJson(body) {
+  const names = [].concat(body.supplier_name || []);
+  const urls  = [].concat(body.supplier_url  || []);
+  const result = [];
+  names.forEach((name, i) => {
+    const n = (name || '').trim();
+    const u = (urls[i] || '').trim();
+    if (n || u) result.push({ name: n, url: u });
+  });
+  return JSON.stringify(result);
+}
+
 router.post('/produtos', requireAuth, uploadProductImage.single('image'), (req, res) => {
-  const { name, description, creative_text, price, category_id, status, priority, badge, specs, suppliers } = req.body;
+  const { name, description, creative_text, price, category_id, status, priority, badge, specs } = req.body;
   const image_url = req.file ? `/uploads/products/${req.file.filename}` : '/images/placeholder-product.jpg';
+  const suppliers = buildSuppliersJson(req.body);
 
   db.prepare(`
     INSERT INTO products (name, description, creative_text, price, category_id, status, priority, badge, image_url, specs, suppliers)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(name, description, creative_text, parseFloat(price), category_id || null, status || 'disponivel',
-    priority ? 1 : 0, badge || null, image_url, specs || '{}', suppliers || '[]');
+    priority ? 1 : 0, badge || null, image_url, specs || '{}', suppliers);
 
   req.flash('success', 'Produto criado com sucesso!');
   res.redirect('/admin/produtos');
 });
 
 router.post('/produtos/:id', requireAuth, uploadProductImage.single('image'), (req, res) => {
-  const { name, description, creative_text, price, category_id, status, priority, badge, specs, suppliers } = req.body;
+  const { name, description, creative_text, price, category_id, status, priority, badge, specs } = req.body;
   const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
   if (!product) {
     req.flash('error', 'Produto não encontrado.');
@@ -138,6 +151,7 @@ router.post('/produtos/:id', requireAuth, uploadProductImage.single('image'), (r
   }
 
   const image_url = req.file ? `/uploads/products/${req.file.filename}` : product.image_url;
+  const suppliers = buildSuppliersJson(req.body);
 
   db.prepare(`
     UPDATE products
@@ -145,7 +159,7 @@ router.post('/produtos/:id', requireAuth, uploadProductImage.single('image'), (r
         priority=?, badge=?, image_url=?, specs=?, suppliers=?, updated_at=CURRENT_TIMESTAMP
     WHERE id=?
   `).run(name, description, creative_text, parseFloat(price), category_id || null,
-    status, priority ? 1 : 0, badge || null, image_url, specs || '{}', suppliers || '[]', req.params.id);
+    status, priority ? 1 : 0, badge || null, image_url, specs || '{}', suppliers, req.params.id);
 
   req.flash('success', 'Produto atualizado!');
   res.redirect('/admin/produtos');

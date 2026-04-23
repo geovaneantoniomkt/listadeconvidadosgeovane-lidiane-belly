@@ -111,10 +111,10 @@
                   suppliersArr.forEach(function(s) {
                 %>
                 <div style="display:flex; gap:8px; align-items:center;">
-                  <input type="text" placeholder="Nome da loja (ex: Magazine Luiza)"
-                    value="<%= s.name || '' %>" class="form-control supplier-name" style="flex:1;">
-                  <input type="text" placeholder="Link do produto (https://...)"
-                    value="<%= s.url || '' %>" class="form-control supplier-url" style="flex:2;">
+                  <input type="text" name="supplier_name[]" placeholder="Nome da loja (ex: Magazine Luiza)"
+                    value="<%= s.name || '' %>" class="form-control" style="flex:1;">
+                  <input type="text" name="supplier_url[]" placeholder="Link do produto (https://...)"
+                    value="<%= s.url || '' %>" class="form-control" style="flex:2;">
                   <button type="button" onclick="this.parentElement.remove()"
                     style="background:none;border:none;cursor:pointer;font-size:1.5rem;color:#dc3545;padding:4px 8px;line-height:1;">×</button>
                 </div>
@@ -123,7 +123,6 @@
               <button type="button" onclick="addSupplier()" class="btn btn-outline btn-sm">
                 ➕ Adicionar loja
               </button>
-              <input type="hidden" name="suppliers" id="suppliers-json" value="[]">
               <p class="form-hint">Adicione os links das lojas onde o convidado pode comprar este produto.</p>
             </div>
 
@@ -157,13 +156,15 @@
     row.style.cssText = 'display:flex; gap:8px; align-items:center;';
     var nameInput = document.createElement('input');
     nameInput.type = 'text';
+    nameInput.name = 'supplier_name[]';
     nameInput.placeholder = 'Nome da loja (ex: Magazine Luiza)';
-    nameInput.className = 'form-control supplier-name';
+    nameInput.className = 'form-control';
     nameInput.style.flex = '1';
     var urlInput = document.createElement('input');
     urlInput.type = 'text';
+    urlInput.name = 'supplier_url[]';
     urlInput.placeholder = 'Link do produto (https://...)';
-    urlInput.className = 'form-control supplier-url';
+    urlInput.className = 'form-control';
     urlInput.style.flex = '2';
     var btn = document.createElement('button');
     btn.type = 'button';
@@ -175,17 +176,6 @@
     row.appendChild(btn);
     list.appendChild(row);
   }
-
-  document.querySelector('form').addEventListener('submit', function() {
-    var rows = document.querySelectorAll('#suppliers-list > div');
-    var data = [];
-    rows.forEach(function(row) {
-      var name = row.querySelector('.supplier-name').value.trim();
-      var url  = row.querySelector('.supplier-url').value.trim();
-      if (name || url) data.push({ name: name, url: url });
-    });
-    document.getElementById('suppliers-json').value = JSON.stringify(data);
-  });
 </script>
 </body>
 </html>
