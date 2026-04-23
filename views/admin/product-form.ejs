@@ -103,10 +103,13 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Fornecedores (JSON)</label>
-              <textarea name="suppliers" class="form-control" rows="4"
-                        placeholder='[{"name": "Magazine Luiza", "url": "https://...", "price": 1299.00}]'
-                        style="font-family: monospace; font-size: var(--text-sm);"><%= product ? product.suppliers || '[]' : '[]' %></textarea>
+              <label class="form-label">Onde comprar — Links das lojas</label>
+              <div id="suppliers-list" style="display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-3);"></div>
+              <button type="button" onclick="addSupplier()" class="btn btn-outline btn-sm">
+                ➕ Adicionar loja
+              </button>
+              <textarea name="suppliers" id="suppliers-json" style="display:none;"></textarea>
+              <p class="form-hint">Adicione os links das lojas onde o convidado pode comprar este produto.</p>
             </div>
 
             <div class="form-group">
@@ -132,5 +135,43 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+  const existingSuppliers = (() => {
+    try { return JSON.parse('<%= product ? (product.suppliers || "[]").replace(/\\/g, "\\\\").replace(/'/g, "\\'") : "[]" %>'); }
+    catch { return []; }
+  })();
+
+  function addSupplier(name = '', url = '') {
+    const list = document.getElementById('suppliers-list');
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex; gap:8px; align-items:center;';
+    row.innerHTML = `
+      <input type="text" placeholder="Nome da loja (ex: Magazine Luiza)" value="${escHtml(name)}"
+        class="form-control supplier-name" style="flex:1;">
+      <input type="url" placeholder="Link do produto (https://...)" value="${escHtml(url)}"
+        class="form-control supplier-url" style="flex:2;">
+      <button type="button" onclick="this.parentElement.remove()"
+        style="background:none;border:none;cursor:pointer;font-size:1.25rem;color:#dc3545;padding:4px 8px;" title="Remover">×</button>
+    `;
+    list.appendChild(row);
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.querySelector('form').addEventListener('submit', () => {
+    const rows = document.querySelectorAll('#suppliers-list > div');
+    const data = [];
+    rows.forEach(row => {
+      const name = row.querySelector('.supplier-name').value.trim();
+      const url  = row.querySelector('.supplier-url').value.trim();
+      if (name || url) data.push({ name, url });
+    });
+    document.getElementById('suppliers-json').value = JSON.stringify(data);
+  });
+
+  existingSuppliers.forEach(s => addSupplier(s.name || '', s.url || ''));
+</script>
 </body>
 </html>
