@@ -264,6 +264,12 @@ router.post('/contribuicoes/:id/cancelar', requireAuth, (req, res) => {
   res.redirect('/admin/contribuicoes');
 });
 
+router.post('/contribuicoes/:id/excluir', requireAuth, (req, res) => {
+  db.prepare('DELETE FROM contributions WHERE id=?').run(req.params.id);
+  req.flash('success', 'Contribuição excluída.');
+  res.redirect('/admin/contribuicoes');
+});
+
 // Adicionar contribuição manual
 router.post('/contribuicoes', requireAuth, (req, res) => {
   const { name, phone, email, amount, message } = req.body;

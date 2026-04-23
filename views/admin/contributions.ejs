@@ -91,17 +91,21 @@
                   <%= new Date(c.created_at).toLocaleDateString('pt-BR') %>
                 </td>
                 <td>
-                  <% if (c.payment_status === 'pendente') { %>
-                  <div style="display: flex; gap: var(--space-2);">
-                    <form method="POST" action="/admin/contribuicoes/<%= c.id %>/confirmar" style="margin: 0;">
-                      <button type="submit" class="btn btn-primary btn-sm">✅ Confirmar</button>
-                    </form>
-                    <form method="POST" action="/admin/contribuicoes/<%= c.id %>/cancelar" style="margin: 0;"
-                          onsubmit="return confirm('Marcar contribuição de <%= c.name %> como cancelada?')">
-                      <button type="submit" class="btn btn-danger btn-sm">❌ Recusar</button>
+                  <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
+                    <% if (c.payment_status === 'pendente') { %>
+                      <form method="POST" action="/admin/contribuicoes/<%= c.id %>/confirmar" style="margin: 0;">
+                        <button type="submit" class="btn btn-primary btn-sm">✅ Confirmar</button>
+                      </form>
+                      <form method="POST" action="/admin/contribuicoes/<%= c.id %>/cancelar" style="margin: 0;"
+                            onsubmit="return confirm('Marcar como cancelada?')">
+                        <button type="submit" class="btn btn-danger btn-sm">❌ Recusar</button>
+                      </form>
+                    <% } %>
+                    <form method="POST" action="/admin/contribuicoes/<%= c.id %>/excluir" style="margin: 0;"
+                          onsubmit="return confirm('Apagar contribuição de <%= c.name %> permanentemente?')">
+                      <button type="submit" class="btn btn-ghost btn-sm" style="color: var(--color-error);" title="Excluir">🗑️</button>
                     </form>
                   </div>
-                  <% } %>
                 </td>
               </tr>
               <% }) %>
