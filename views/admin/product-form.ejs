@@ -104,8 +104,21 @@
 
             <div class="form-group">
               <label class="form-label">Onde comprar — Links das lojas</label>
-              <div id="suppliers-list" style="display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-3);"
-                   data-suppliers="<%- JSON.stringify(JSON.parse(product && product.suppliers ? product.suppliers : '[]')) %>">
+              <div id="suppliers-list" style="display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-3);">
+                <%
+                  var suppliersArr = [];
+                  try { suppliersArr = JSON.parse(product && product.suppliers ? product.suppliers : '[]'); } catch(e) {}
+                  suppliersArr.forEach(function(s) {
+                %>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input type="text" placeholder="Nome da loja (ex: Magazine Luiza)"
+                    value="<%= s.name || '' %>" class="form-control supplier-name" style="flex:1;">
+                  <input type="text" placeholder="Link do produto (https://...)"
+                    value="<%= s.url || '' %>" class="form-control supplier-url" style="flex:2;">
+                  <button type="button" onclick="this.parentElement.remove()"
+                    style="background:none;border:none;cursor:pointer;font-size:1.5rem;color:#dc3545;padding:4px 8px;line-height:1;">×</button>
+                </div>
+                <% }); %>
               </div>
               <button type="button" onclick="addSupplier()" class="btn btn-outline btn-sm">
                 ➕ Adicionar loja
@@ -138,9 +151,7 @@
 
 <script src="/js/main.js"></script>
 <script>
-  function addSupplier(name, url) {
-    name = name || '';
-    url  = url  || '';
+  function addSupplier() {
     var list = document.getElementById('suppliers-list');
     var row  = document.createElement('div');
     row.style.cssText = 'display:flex; gap:8px; align-items:center;';
@@ -149,17 +160,14 @@
     nameInput.placeholder = 'Nome da loja (ex: Magazine Luiza)';
     nameInput.className = 'form-control supplier-name';
     nameInput.style.flex = '1';
-    nameInput.value = name;
     var urlInput = document.createElement('input');
     urlInput.type = 'text';
     urlInput.placeholder = 'Link do produto (https://...)';
     urlInput.className = 'form-control supplier-url';
     urlInput.style.flex = '2';
-    urlInput.value = url;
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.innerHTML = '&times;';
-    btn.title = 'Remover';
     btn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:1.5rem;color:#dc3545;padding:4px 8px;line-height:1;';
     btn.onclick = function() { row.remove(); };
     row.appendChild(nameInput);
@@ -178,14 +186,6 @@
     });
     document.getElementById('suppliers-json').value = JSON.stringify(data);
   });
-
-  // Carrega fornecedores existentes via data-attribute (seguro, sem escaping JS)
-  var listEl = document.getElementById('suppliers-list');
-  var rawData = listEl.getAttribute('data-suppliers');
-  try {
-    var existing = JSON.parse(rawData);
-    existing.forEach(function(s) { addSupplier(s.name, s.url); });
-  } catch(e) {}
 </script>
 </body>
 </html>
