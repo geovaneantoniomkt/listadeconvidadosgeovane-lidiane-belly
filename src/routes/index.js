@@ -167,7 +167,7 @@ router.get('/presentes/:id', (req, res) => {
   try { product.suppliers = JSON.parse(product.suppliers || '[]'); } catch { product.suppliers = []; }
 
   const related = db.prepare(`
-    SELECT p.*, c.name as category_name
+    SELECT p.*, c.name as category_name, c.icon as category_icon
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.id
     WHERE p.category_id = ? AND p.id != ? AND p.status != 'comprado'

@@ -256,8 +256,12 @@
       <% related.forEach(rel => { %>
       <a href="/presentes/<%= rel.id %>" class="product-card-link">
         <div class="card product-card card-img-zoom">
-          <div class="product-img-placeholder" style="font-size: 3rem; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; background: var(--color-bg-subtle);">
-            <%= rel.category_icon || '🎁' %>
+          <div style="aspect-ratio: 4/3; overflow: hidden; background: var(--color-bg-subtle); display: flex; align-items: center; justify-content: center;">
+            <% if (rel.image_url && rel.image_url !== '/images/placeholder-product.jpg') { %>
+              <img src="<%= rel.image_url %>" alt="<%= rel.name %>" style="width:100%; height:100%; object-fit:cover;">
+            <% } else { %>
+              <span style="font-size: 3rem;"><%= rel.category_icon || '🎁' %></span>
+            <% } %>
           </div>
           <div class="product-body">
             <h3 class="product-name" style="font-size: var(--text-base)"><%= rel.name %></h3>
