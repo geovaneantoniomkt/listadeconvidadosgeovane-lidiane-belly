@@ -9,7 +9,7 @@ const fs = require('fs');
 // Upload de comprovantes
 const receiptStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, '../../uploads/receipts');
+    const dir = path.join(__dirname, '../../data/uploads/receipts');
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
@@ -38,7 +38,7 @@ const uploadReceipt = multer({
 // Upload de imagens de produtos (admin)
 const productStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, '../../uploads/products');
+    const dir = path.join(__dirname, '../../data/uploads/products');
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
