@@ -151,6 +151,125 @@
 
 
 <!-- ═══════════════════════════════════════════
+     ANDAMENTO DA OBRA
+     ═══════════════════════════════════════════ -->
+<section class="section" style="background: var(--color-bg-warm);">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">🏗️ Nossa construção</span>
+      <h2 class="section-title">Andamento da Obra</h2>
+      <p class="section-subtitle">
+        Acompanhe em tempo real o progresso da nossa casa. Cada etapa concluída é um sonho se tornando realidade.
+      </p>
+    </div>
+
+    <%
+      const overall = parseFloat(settings.construction_overall || 0);
+      const deliveryDateStr = settings.delivery_date || '';
+      const lastUpdate = settings.construction_last_update || '';
+    %>
+
+    <!-- Countdown + data entrega -->
+    <% if (deliveryDateStr) { %>
+    <div class="fade-in" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-8); text-align: center;">
+      <div style="background: white; border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-sm);">
+        <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-2);">📅 Previsão de Entrega</div>
+        <div style="font-family: var(--font-serif); font-size: var(--text-lg); font-weight: 700; color: var(--color-primary);" id="deliveryDateDisplay">—</div>
+      </div>
+      <div style="background: white; border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-sm);">
+        <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-2);">⏳ Dias Restantes</div>
+        <div style="font-family: var(--font-serif); font-size: var(--text-2xl); font-weight: 700; color: var(--color-accent);" id="daysRemaining">—</div>
+      </div>
+      <div style="background: white; border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-sm);">
+        <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-2);">🕐 Horário Brasília</div>
+        <div style="font-family: var(--font-serif); font-size: var(--text-lg); font-weight: 700; color: var(--color-text);" id="brasiliaTime">—</div>
+      </div>
+      <div style="background: white; border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-sm);">
+        <div style="font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-2);">📊 Progresso Geral</div>
+        <div style="font-family: var(--font-serif); font-size: var(--text-2xl); font-weight: 700; color: var(--color-success);"><%= overall.toFixed(2) %>%</div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Barra geral -->
+    <div class="fade-in" style="background: white; border-radius: var(--radius-xl); padding: var(--space-6); margin-bottom: var(--space-6); box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
+        <span style="font-weight: 700; font-size: var(--text-base);">Progresso Geral da Obra</span>
+        <span style="font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 700; color: var(--color-primary);"><%= overall.toFixed(2) %>%</span>
+      </div>
+      <div style="background: var(--color-border); border-radius: var(--radius-full); height: 16px; overflow: hidden;">
+        <div style="height: 100%; width: <%= overall %>%; background: linear-gradient(90deg, var(--color-primary), var(--color-accent)); border-radius: var(--radius-full); transition: width 1s ease;"></div>
+      </div>
+      <% if (lastUpdate) { %>
+        <div style="font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-2);">Última atualização: <%= lastUpdate %></div>
+      <% } %>
+    </div>
+
+    <!-- Etapas -->
+    <% if (constructionStages && constructionStages.length > 0) { %>
+    <div class="fade-in" style="background: white; border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
+      <h3 style="font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-5);">Detalhes por Etapa</h3>
+      <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+        <% constructionStages.forEach(stage => { %>
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);">
+            <span style="font-size: var(--text-sm); font-weight: 600;"><%= stage.name %></span>
+            <span style="font-size: var(--text-sm); font-weight: 700; color: <%= stage.percentage >= 100 ? 'var(--color-success)' : 'var(--color-primary)' %>;"><%= parseFloat(stage.percentage).toFixed(2) %>%</span>
+          </div>
+          <div style="background: var(--color-border); border-radius: var(--radius-full); height: 10px; overflow: hidden;">
+            <div style="height: 100%; width: <%= stage.percentage %>%; background: <%= stage.percentage >= 100 ? 'var(--color-success)' : 'var(--color-primary)' %>; border-radius: var(--radius-full);"></div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+
+  </div>
+</section>
+
+<!-- Script countdown -->
+<script>
+(function() {
+  var deliveryDate = new Date('<%= settings.delivery_date || '' %>T00:00:00-03:00');
+
+  function update() {
+    var now = new Date();
+    var nowBrasilia = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+
+    // Horário Brasília
+    var timeEl = document.getElementById('brasiliaTime');
+    if (timeEl) {
+      timeEl.textContent = nowBrasilia.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    if (!isNaN(deliveryDate)) {
+      // Data entrega formatada
+      var dateEl = document.getElementById('deliveryDateDisplay');
+      if (dateEl) {
+        dateEl.textContent = deliveryDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'America/Sao_Paulo' });
+      }
+
+      // Dias restantes
+      var daysEl = document.getElementById('daysRemaining');
+      if (daysEl) {
+        var diff = deliveryDate - nowBrasilia;
+        if (diff > 0) {
+          daysEl.textContent = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        } else {
+          daysEl.textContent = '🏠 Chegou!';
+        }
+      }
+    }
+  }
+
+  update();
+  setInterval(update, 1000);
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════
      PRÉVIA DA HISTÓRIA
      ═══════════════════════════════════════════ -->
 <section class="section" style="background: var(--color-bg-warm);">

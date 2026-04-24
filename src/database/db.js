@@ -104,6 +104,15 @@ function initializeDatabase() {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
+    -- Etapas da obra (progresso da construção)
+    CREATE TABLE IF NOT EXISTS construction_stages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      percentage REAL DEFAULT 0,
+      sort_order INTEGER DEFAULT 0,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
     -- Índices para performance
     CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
     CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
@@ -127,6 +136,22 @@ function initializeDatabase() {
   insertSetting.run('familia_historia', 'Éramos só um casal apaixonado e um sonho grande. Hoje, somos três — e esse lar que estamos construindo tem o cheirinho da Belly e o tempero do nosso amor...');
   insertSetting.run('popup_enabled', '1');
   insertSetting.run('goal_calculation', 'total');
+  insertSetting.run('delivery_date', '2027-02-27');
+  insertSetting.run('construction_overall', '77.32');
+  insertSetting.run('construction_last_update', 'Abril/2026');
+
+  // Etapas padrão da obra (só insere se tabela estiver vazia)
+  const stageCount = db.prepare('SELECT COUNT(*) as n FROM construction_stages').get().n;
+  if (stageCount === 0) {
+    const insertStage = db.prepare('INSERT INTO construction_stages (name, percentage, sort_order) VALUES (?, ?, ?)');
+    insertStage.run('Serviços Preliminares', 100, 1);
+    insertStage.run('Fundação', 97.31, 2);
+    insertStage.run('Estrutura', 96.88, 3);
+    insertStage.run('Instalações', 61.61, 4);
+    insertStage.run('Revestimentos Internos', 62.61, 5);
+    insertStage.run('Revestimentos Externos', 54.31, 6);
+    insertStage.run('Pintura', 25.42, 7);
+  }
 
   console.log('✅ Banco de dados inicializado com sucesso.');
 }

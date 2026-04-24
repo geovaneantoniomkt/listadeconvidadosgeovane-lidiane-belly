@@ -83,7 +83,9 @@ router.get('/', (req, res) => {
     raffleNumbers: db.prepare("SELECT COUNT(*) as n FROM raffle_numbers WHERE payment_status = 'confirmado'").get().n,
   };
 
-  res.render('pages/home', { settings, goal, featured, stats, page: 'home' });
+  const constructionStages = db.prepare('SELECT * FROM construction_stages ORDER BY sort_order ASC').all();
+
+  res.render('pages/home', { settings, goal, featured, stats, constructionStages, page: 'home' });
 });
 
 // ────────────────────────────────────────────────

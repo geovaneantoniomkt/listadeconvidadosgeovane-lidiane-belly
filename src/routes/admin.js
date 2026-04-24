@@ -386,4 +386,32 @@ router.post('/categorias/:id/excluir', requireAuth, (req, res) => {
   res.redirect('/admin/categorias');
 });
 
+// ────────────────────────────────────────────────
+// OBRA / CONSTRUÇÃO
+// ────────────────────────────────────────────────
+router.get('/obra', requireAuth, (req, res) => {
+  const settings = getAllSettings();
+  const stages = db.prepare('SELECT * FROM construction_stages ORDER BY sort_order ASC').all();
+  res.render('admin/construction', { settings, stages, flash: req.flash(), page: 'admin-construction' });
+});
+
+router.post('/obra', requireAuth, (req, res) => {
+  const { overall, delivery_date, last_update, stage_id, stage_percentage } = req.body;
+  const upsert = db.prepare(`INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=CURRENT_TIMESTAMP`);
+  if (overall !== undefined) upsert.run('construction_overall', String(parseFloat(overall) || 0));
+  if (delivery_date) upsert.run('delivery_date', delivery_date);
+  if (last_update) upsert.run('construction_last_update', last_update);
+
+  const ids = [].concat(stage_id || []);
+  const pcts = [].concat(stage_percentage || []);
+  const updateStage = db.prepare('UPDATE construction_stages SET percentage=?, updated_at=CURRENT_TIMESTAMP WHERE id=?');
+  ids.forEach((id, i) => {
+    const pct = parseFloat(pcts[i]);
+    if (!isNaN(pct)) updateStage.run(Math.min(100, Math.max(0, pct)), id);
+  });
+
+  req.flash('success', 'Andamento da obra atualizado!');
+  res.redirect('/admin/obra');
+});
+
 module.exports = router;
