@@ -113,36 +113,20 @@ function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_contributions_status ON contributions(payment_status);
   `);
 
-  // Configurações padrão (INSERT OR IGNORE — não sobrescreve valores já salvos)
+  // Configurações padrão (INSERT OR IGNORE — só insere se ainda não existe, nunca sobrescreve)
   const insertSetting = db.prepare(`
     INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)
   `);
-  const updateSetting = db.prepare(`
-    UPDATE settings SET value = ? WHERE key = ?
-  `);
 
-  insertSetting.run('meta_total', process.env.META_TOTAL || '15000');
+  insertSetting.run('meta_total', '20000');
   insertSetting.run('raffle_price_per_number', '10');
-  insertSetting.run('mercadopago_link', process.env.MERCADOPAGO_LINK_CONTRIBUICAO || '#');
-  insertSetting.run('whatsapp_number', process.env.WHATSAPP_NUMBER || '5519999833068');
+  insertSetting.run('mercadopago_link', '#');
+  insertSetting.run('whatsapp_number', '5519999833068');
   insertSetting.run('site_title', 'Casa Nova Geovane & Lidiane');
   insertSetting.run('site_description', 'Nossa lista de presentes de casa nova. Cada presente é um pedacinho do nosso lar.');
   insertSetting.run('familia_historia', 'Éramos só um casal apaixonado e um sonho grande. Hoje, somos três — e esse lar que estamos construindo tem o cheirinho da Belly e o tempero do nosso amor...');
   insertSetting.run('popup_enabled', '1');
   insertSetting.run('goal_calculation', 'total');
-
-  // Sempre sincroniza ENV vars críticas com o banco (garante que Railway ENV tenha prioridade)
-  if (process.env.MERCADOPAGO_LINK_CONTRIBUICAO) {
-    updateSetting.run(process.env.MERCADOPAGO_LINK_CONTRIBUICAO, 'mercadopago_link');
-  }
-  if (process.env.META_TOTAL) {
-    updateSetting.run(process.env.META_TOTAL, 'meta_total');
-  }
-  if (process.env.WHATSAPP_NUMBER) {
-    updateSetting.run(process.env.WHATSAPP_NUMBER, 'whatsapp_number');
-  } else {
-    updateSetting.run('5519999833068', 'whatsapp_number');
-  }
 
   console.log('✅ Banco de dados inicializado com sucesso.');
 }
