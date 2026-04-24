@@ -46,48 +46,50 @@
   </section>
 
   <!-- Filtros -->
-  <div class="gifts-header" style="padding: 10px 0;">
+  <div class="gifts-header" style="padding:8px 0;">
     <div class="container">
       <form method="GET" action="/presentes" id="filter-form">
 
-        <!-- Linha 1: busca + filtrar (compacto) -->
-        <div style="display:flex; gap:8px; align-items:center;">
-          <div class="search-box" style="flex:1;">
-            <span class="search-icon">🔍</span>
-            <input type="text" name="busca" class="form-control" style="height:38px; font-size:var(--text-sm);"
-                   placeholder="Buscar presente..." value="<%= filters.busca || '' %>">
-          </div>
+        <!-- Linha 1: busca + botões lado a lado (sem position:absolute) -->
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="text" name="busca" class="form-control"
+            style="flex:1;min-width:0;height:40px;font-size:var(--text-sm);border-radius:var(--radius-full);padding:0 14px;"
+            placeholder="🔍 Buscar presente..." value="<%= filters.busca || '' %>">
           <button type="button" onclick="toggleFilters()"
-            style="display:flex;align-items:center;gap:5px;background:var(--color-bg-warm);border:1px solid var(--color-border);border-radius:var(--radius-full);padding:6px 14px;cursor:pointer;font-size:var(--text-sm);font-weight:600;white-space:nowrap;height:38px;flex-shrink:0;">
-            ⚙️ Filtrar<% if (filters.categoria || (filters.ordem && filters.ordem !== 'prioridade')) { %> <span style="background:var(--color-primary);color:white;border-radius:50%;width:16px;height:16px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;"><%= (filters.categoria?1:0)+(filters.ordem&&filters.ordem!=='prioridade'?1:0) %></span><% } %>
+            style="flex-shrink:0;background:<%= (filters.categoria||(filters.ordem&&filters.ordem!=='prioridade'))?'var(--color-primary)':'var(--color-bg-warm)' %>;color:<%= (filters.categoria||(filters.ordem&&filters.ordem!=='prioridade'))?'white':'var(--color-text)' %>;border:1px solid var(--color-border);border-radius:var(--radius-full);width:40px;height:40px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            ⚙️
           </button>
-          <button type="submit" class="btn btn-primary" style="height:38px;padding:0 14px;font-size:var(--text-sm);flex-shrink:0;">Buscar</button>
-          <% if (filters.busca || filters.categoria || filters.ordem) { %>
-            <a href="/presentes" style="font-size:var(--text-sm);color:var(--color-text-muted);white-space:nowrap;flex-shrink:0;">✕</a>
-          <% } %>
+          <button type="submit"
+            style="flex-shrink:0;background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);height:40px;padding:0 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
+            Buscar
+          </button>
         </div>
 
-        <!-- Painel colapsável -->
-        <div id="filter-panel" style="display:<%= (filters.categoria||(filters.ordem&&filters.ordem!=='prioridade'))?'flex':'none' %>;gap:8px;margin-top:8px;flex-wrap:wrap;padding:10px;background:var(--color-bg-warm);border-radius:var(--radius-lg);">
-          <select name="categoria" class="form-control" style="flex:1;min-width:140px;font-size:var(--text-sm);height:36px;">
+        <!-- Painel colapsável (categorias + ordem) -->
+        <div id="filter-panel" style="display:none;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <select name="categoria" class="form-control" style="flex:1;min-width:130px;font-size:var(--text-sm);height:36px;">
             <option value="">Todas as categorias</option>
             <% categories.forEach(cat => { %><option value="<%= cat.slug %>" <%= filters.categoria===cat.slug?'selected':'' %>><%= cat.icon %> <%= cat.name %></option><% }) %>
           </select>
-          <select name="ordem" class="form-control" style="flex:1;min-width:140px;font-size:var(--text-sm);height:36px;">
+          <select name="ordem" class="form-control" style="flex:1;min-width:130px;font-size:var(--text-sm);height:36px;">
             <option value="prioridade" <%= !filters.ordem||filters.ordem==='prioridade'?'selected':'' %>>⭐ Prioridade</option>
             <option value="menor-preco" <%= filters.ordem==='menor-preco'?'selected':'' %>>💰 Menor preço</option>
             <option value="maior-preco" <%= filters.ordem==='maior-preco'?'selected':'' %>>💎 Maior preço</option>
             <option value="nome" <%= filters.ordem==='nome'?'selected':'' %>>🔤 A-Z</option>
           </select>
+          <% if (filters.busca || filters.categoria || filters.ordem) { %>
+            <a href="/presentes" style="display:flex;align-items:center;font-size:var(--text-sm);color:var(--color-error);text-decoration:none;white-space:nowrap;">✕ Limpar</a>
+          <% } %>
         </div>
 
-        <!-- Linha 2: chips status + contagem (scroll horizontal no mobile) -->
-        <div style="display:flex;align-items:center;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;">
-          <a href="/presentes?busca=<%= encodeURIComponent(filters.busca||'') %>&categoria=<%= filters.categoria||'' %>&ordem=<%= filters.ordem||'' %>" class="filter-chip <%= !filters.status?'active':'' %>" style="white-space:nowrap;flex-shrink:0;">Todos</a>
-          <a href="/presentes?busca=<%= encodeURIComponent(filters.busca||'') %>&categoria=<%= filters.categoria||'' %>&ordem=<%= filters.ordem||'' %>&status=disponivel" class="filter-chip <%= filters.status==='disponivel'?'active':'' %>" style="white-space:nowrap;flex-shrink:0;">🟢 Disponíveis</a>
-          <a href="/presentes?busca=<%= encodeURIComponent(filters.busca||'') %>&categoria=<%= filters.categoria||'' %>&ordem=<%= filters.ordem||'' %>&status=reservado" class="filter-chip <%= filters.status==='reservado'?'active':'' %>" style="white-space:nowrap;flex-shrink:0;">🟡 Reservados</a>
-          <a href="/presentes?busca=<%= encodeURIComponent(filters.busca||'') %>&categoria=<%= filters.categoria||'' %>&ordem=<%= filters.ordem||'' %>&status=comprado" class="filter-chip <%= filters.status==='comprado'?'active':'' %>" style="white-space:nowrap;flex-shrink:0;">✅ Comprados</a>
-          <span style="font-size:var(--text-xs);color:var(--color-text-muted);margin-left:auto;white-space:nowrap;flex-shrink:0;padding-left:8px;"><%= products.length %> itens</span>
+        <!-- Linha 2: chips + contagem (scroll horizontal) -->
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
+          <% var b=filters.busca||'', c=filters.categoria||'', o=filters.ordem||''; %>
+          <a href="/presentes?busca=<%= encodeURIComponent(b) %>&categoria=<%= c %>&ordem=<%= o %>" class="filter-chip <%= !filters.status?'active':'' %>" style="white-space:nowrap;flex-shrink:0;font-size:12px;padding:4px 10px;">Todos</a>
+          <a href="/presentes?busca=<%= encodeURIComponent(b) %>&categoria=<%= c %>&ordem=<%= o %>&status=disponivel" class="filter-chip <%= filters.status==='disponivel'?'active':'' %>" style="white-space:nowrap;flex-shrink:0;font-size:12px;padding:4px 10px;">🟢 Disponíveis</a>
+          <a href="/presentes?busca=<%= encodeURIComponent(b) %>&categoria=<%= c %>&ordem=<%= o %>&status=reservado" class="filter-chip <%= filters.status==='reservado'?'active':'' %>" style="white-space:nowrap;flex-shrink:0;font-size:12px;padding:4px 10px;">🟡 Reservados</a>
+          <a href="/presentes?busca=<%= encodeURIComponent(b) %>&categoria=<%= c %>&ordem=<%= o %>&status=comprado" class="filter-chip <%= filters.status==='comprado'?'active':'' %>" style="white-space:nowrap;flex-shrink:0;font-size:12px;padding:4px 10px;">✅ Comprados</a>
+          <span style="font-size:11px;color:var(--color-text-muted);flex-shrink:0;padding-left:6px;white-space:nowrap;"><%= products.length %> itens</span>
         </div>
 
         <input type="hidden" name="status" value="<%= filters.status || '' %>">
