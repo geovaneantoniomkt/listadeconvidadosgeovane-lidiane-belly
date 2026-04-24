@@ -46,7 +46,7 @@
   </section>
 
   <!-- Filtros -->
-  <div style="background: white; border-bottom: 1px solid var(--color-border); position: sticky; top: 64px; z-index: 100;">
+  <div class="gifts-header">
     <div class="container" style="padding-top: var(--space-3); padding-bottom: var(--space-3);">
 
       <form method="GET" action="/presentes" id="filter-form">
@@ -134,7 +134,7 @@
         </div>
 
       <% } else { %>
-        <div class="products-grid stagger-children">
+        <div class="products-grid">
           <% products.forEach(product => {
             const statusMap = {
               disponivel: { text: 'Disponível', cls: 'disponivel' },
