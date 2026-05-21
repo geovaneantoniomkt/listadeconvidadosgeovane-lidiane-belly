@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const isProd = process.env.NODE_ENV === 'production';
 
-// Necessário para Railway/Render/Heroku — confiar no proxy reverso
+// Necessário para Render/Railway/Heroku — confiar no proxy reverso
 app.set('trust proxy', 1);
 
 // ────────────────────────────────────────────────
@@ -34,7 +34,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false,        // Railway lida com HTTPS no proxy — cookie sem Secure funciona
+    secure: isProd,   // HTTPS em produção (Render usa proxy com HTTPS)
     httpOnly: true,
     sameSite: 'lax',
     maxAge: 24 * 60 * 60 * 1000 // 24h
@@ -66,9 +66,10 @@ app.use('/admin', adminRoutes);
 app.use('/', publicRoutes);
 
 // ────────────────────────────────────────────────
-// START
+// START — aguarda banco de dados inicializar
 // ────────────────────────────────────────────────
-app.listen(PORT, () => {
+const db = require('./src/database/db');
+db.ready.then(() => app.listen(PORT, () => {
   console.log('');
   console.log('🏠 ================================');
   console.log('🏠  LISTA DE PRESENTES — CASA NOVA');
@@ -82,6 +83,6 @@ app.listen(PORT, () => {
   console.log('');
   console.log('💡  Para inserir dados de exemplo: npm run seed');
   console.log('');
-});
+}));
 
 module.exports = app;
