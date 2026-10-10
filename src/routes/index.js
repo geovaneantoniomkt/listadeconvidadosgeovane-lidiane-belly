@@ -328,9 +328,8 @@ router.post('/sorteio/reservar', async (req, res) => {
       }
     });
 
-    const mpLink = await getSetting('mercadopago_link') || '#';
     res.redirect(
-      `/sorteio/pagar?nome=${encodeURIComponent(name.trim())}&phone=${encodeURIComponent(phone.trim())}&qtd=${selectedNumbers.length}&total=${totalAmount}&numeros=${selectedNumbers.join(',')}&mp=${encodeURIComponent(mpLink)}`
+      `/sorteio/pagar?nome=${encodeURIComponent(name.trim())}&phone=${encodeURIComponent(phone.trim())}&qtd=${selectedNumbers.length}&total=${totalAmount}&numeros=${selectedNumbers.join(',')}`
     );
   } catch (err) {
     console.error(err);
@@ -342,14 +341,15 @@ router.post('/sorteio/reservar', async (req, res) => {
 // GET — Página de pagamento do sorteio
 router.get('/sorteio/pagar', async (req, res) => {
   try {
-    const { nome, phone, qtd, total, numeros, mp } = req.query;
+    const { nome, phone, qtd, total, numeros } = req.query;
     const settings = await getAllSettings();
     res.render('pages/raffle-pay', {
       settings, nome, phone,
       qtd:     parseInt(qtd) || 1,
       total:   parseFloat(total) || 0,
       numeros: numeros ? numeros.split(',') : [],
-      mpLink:  mp || '#',
+      // Link sempre vem das configurações — nunca da URL
+      mpLink:  settings.mercadopago_link || '#',
       page: 'raffle'
     });
   } catch (err) {
@@ -388,8 +388,7 @@ router.post('/contribuir', async (req, res) => {
       [name.trim(), phone.trim(), email?.trim() || null, valor, message?.trim() || null]
     );
 
-    const mpLink = await getSetting('mercadopago_link') || '#';
-    res.redirect(`/contribuir/pagar?nome=${encodeURIComponent(name.trim())}&valor=${valor}&mp=${encodeURIComponent(mpLink)}`);
+    res.redirect(`/contribuir/pagar?nome=${encodeURIComponent(name.trim())}&valor=${valor}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro interno');
@@ -398,12 +397,12 @@ router.post('/contribuir', async (req, res) => {
 
 router.get('/contribuir/pagar', async (req, res) => {
   try {
-    const { nome, valor, mp } = req.query;
+    const { nome, valor } = req.query;
     const settings = await getAllSettings();
     res.render('pages/contribute-pay', {
       settings, nome,
       valor:  parseFloat(valor) || 0,
-      mpLink: mp || '#',
+      mpLink: settings.mercadopago_link || '#',
       page: 'contribute'
     });
   } catch (err) {
