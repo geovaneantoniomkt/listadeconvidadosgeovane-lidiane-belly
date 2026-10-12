@@ -2,6 +2,7 @@
 // CONFIGURAÇÃO DO BANCO DE DADOS — PostgreSQL (Neon)
 // ================================================
 const { Pool, types } = require('pg');
+const { aplicarCargaUnica } = require('./carga-unica');
 
 // Retorna bigint (INT8) como número JS
 types.setTypeParser(20, val => parseInt(val, 10));
@@ -190,7 +191,7 @@ async function initializeDatabase() {
     ['familia_historia',         'Éramos só um casal apaixonado e um sonho grande. Hoje, somos três — e esse lar que estamos construindo tem o cheirinho da Belly e o tempero do nosso amor...'],
     ['popup_enabled',            '1'],
     ['goal_calculation',         'total'],
-    ['delivery_date',            '2027-02-27'],
+    ['delivery_date',            '2027-01-28'],
     ['construction_overall',     '77.32'],
     ['construction_last_update', 'Abril/2026'],
   ]) {
@@ -218,6 +219,8 @@ async function initializeDatabase() {
       );
     }
   }
+
+  await aplicarCargaUnica(pool);
 
   console.log('✅ Banco de dados PostgreSQL inicializado com sucesso.');
 }

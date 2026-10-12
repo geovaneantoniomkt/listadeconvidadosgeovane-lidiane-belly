@@ -1,0 +1,431 @@
+{
+  "categorias": [
+    {
+      "name": "Sala de Jantar",
+      "slug": "sala-de-jantar",
+      "icon": "🍽️"
+    },
+    {
+      "name": "Eletrodomésticos",
+      "slug": "eletrodomesticos",
+      "icon": "⚡"
+    },
+    {
+      "name": "Utensílios",
+      "slug": "utensilios",
+      "icon": "🍳"
+    },
+    {
+      "name": "Sala",
+      "slug": "sala",
+      "icon": "🛋️"
+    },
+    {
+      "name": "Quarto",
+      "slug": "quarto",
+      "icon": "🛏️"
+    }
+  ],
+  "produtos": [
+    {
+      "name": "Aparelho de Jantar Verde Escuro 36 Peças",
+      "category": "sala-de-jantar",
+      "price": 749.9,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1hEob3v",
+          "price": 749.9
+        }
+      ]
+    },
+    {
+      "name": "Aparelho de Jantar Porto Brasil Orgânico Arauco 30 Peças",
+      "category": "sala-de-jantar",
+      "price": 910,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Magazine Luiza",
+          "url": "https://www.magazineluiza.com.br/aparelho-de-jantar-porto-brasil-organico-arauco-30-pecas-ceramica-stoneware-verde-mesa-posta/p/ec28888dkh/ud/apja/?partner_id=64853&utm_source=pdp_desk&utm_medium=share",
+          "price": 910
+        }
+      ]
+    },
+    {
+      "name": "Kit 6 Pçs Jogo Americano Redondo Sousplat - Lugar Americano",
+      "category": "sala-de-jantar",
+      "price": 64.4,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1i524g6",
+          "price": 64.4
+        }
+      ]
+    },
+    {
+      "name": "Kit Jogo Americano Pistache Com Cru 6 Lug. Mesa Posta",
+      "category": "sala-de-jantar",
+      "price": 76.99,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1mNuzwe",
+          "price": 76.99
+        }
+      ]
+    },
+    {
+      "name": "Mesa Jantar Retangular 4 Lugares 120x80cm Tampo 40mm C/ Vidro",
+      "category": "sala-de-jantar",
+      "price": 1000,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/2pw5L4U",
+          "price": 1000
+        }
+      ]
+    },
+    {
+      "name": "Conjunto Mesa Jantar 1,20m Off-white 4 Cadeiras Linho Bege",
+      "category": "sala-de-jantar",
+      "price": 2540,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1rDW6RQ",
+          "price": 2540
+        }
+      ]
+    },
+    {
+      "name": "Geladeira Panasonic BB64",
+      "category": "eletrodomesticos",
+      "price": 4899,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Panasonic",
+          "url": "https://loja.panasonic.com.br/geladeira-panasonic-bb64-aco-escovado-nr-bb64pv2x/p",
+          "price": 4899
+        }
+      ]
+    },
+    {
+      "name": "Lavadora de Roupas Samsung 11kg Diamond Drum",
+      "category": "eletrodomesticos",
+      "price": 2454.61,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Casas Bahia",
+          "url": "https://www.casasbahia.com.br/lavadora-de-roupas-samsung-ww11t4040bxfaz-com-diamond-drum-e-vapor-de-higiene-inox-11kg/p/55067148?utm_medium=Cpc&utm_source=GP_PLA&IdSku=55067148&idLojista=10037&tipoLojista=1P&gclsrc=aw.ds&&utm_campaign=cb_b2c_gg_shopping_core_eldo_lavadoras_2&gad_source=1&gad_campaignid=23750801987&gbraid=0AAAAADtAamgLhQ5QZ6V4PC1e-G2-icw52&gclid=CjwKCAjwqazPBhALEiwAOuXqdIuwdkxZacssuAr7fyyfq76V8RA9QIFdjhL-k9avfczsmrdkEd7gRRoCvBQQAvD_BwE",
+          "price": 2454.61
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1EtJai1"
+        }
+      ]
+    },
+    {
+      "name": "Lava-Louças Philco PLL10 10 Serviços",
+      "category": "eletrodomesticos",
+      "price": 2199,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Casas Bahia",
+          "url": "https://www.casasbahia.com.br/lava-loucas-philco-pll10-10-servicos-preta-6-programas-embutir-painel-digital/p/55073274?utm_medium=Cpc&utm_source=GP_PLA&IdSku=55073274&idLojista=10037&tipoLojista=1P&gclsrc=aw.ds&&utm_campaign=cb_b2c_gg_shopping_core_eldo_geral&gad_source=1&gad_campaignid=22444217737&gbraid=0AAAAADtAamjRjGGukSyuTwpIhtwpCcSDO&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO2m8cLb0QeKH5BOWpeAUiiEEWsnf7aWqTuULjYqJledmPXzwq2d8GBoCXtoQAvD_BwE",
+          "price": 2199
+        }
+      ]
+    },
+    {
+      "name": "Forno",
+      "category": "eletrodomesticos",
+      "price": 1376.32,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/product/1323031590/22094051556?exp_group=rollout&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRvS3L9OTXdZ5FJNxILig8p7lQ7pNpXYtdZAbsM8MQrkGmzJ0eOQRwaQfuYgAF9FAqYvxRTQ9oVrOjPOJqmNpcGhlcnRleHTEmQAAAAz_4_r3SjSYw_uqtHLce3RJ3x4vaH8a6PfXXEza6gDB99Xt7m-bVNutxIUo2K1RCYemVIAlJtFZGFf8R1zakqOXEO8KnVI-pcrz8SMCQPX6fnG8UDQmhVHT96zN4dqdbHGaIvbXcr4jkViYWxAxY0LoWa-JZ_ANKAH2vwh3lMmCq5ufd24rL8qDDRL4DPpQqXwj31Px_Q&mmp_pid=an_18318290384&uls_trackid=55fffret007d&utm_campaign=id_7j51KjcLUh&utm_content=----&utm_medium=affiliates&utm_source=an_18318290384&utm_term=esgmctk85u3u",
+          "price": 1376.32
+        }
+      ]
+    },
+    {
+      "name": "Micro-ondas",
+      "category": "eletrodomesticos",
+      "price": 712.98,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/dp/B076XCSJ4Q?ref=cm_sw_r_cso_wa_apin_dp_Z04BD3DFZPJF46XC7DJV&ref_=cm_sw_r_cso_wa_apin_dp_Z04BD3DFZPJF46XC7DJV&social_share=cm_sw_r_cso_wa_apin_dp_Z04BD3DFZPJF46XC7DJV",
+          "price": 712.98
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1etX68u",
+          "price": 1289
+        }
+      ]
+    },
+    {
+      "name": "Aspirador Robô",
+      "category": "eletrodomesticos",
+      "price": 3900,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Xiaomi-Robot-Vacuum-X20-Pro/dp/B0DFJGKW2L/ref=sr_1_26?dib=eyJ2IjoiMSJ9.n2zldPTFuPuasSbqQZUxH6TQ9KBI_dip0lwyPyEBD5TydKtbPRIpwtyaD1gewZ-_eca3Rv2UXv5GqT75hHdTQ6dl-W8PFe29SaxaCgJLOezUhgwbDukC6T1hebcTnZb_cqP-i4tOf74-Wl-EiJB2iOA0tHM-mT4Xf9sXLF5Vb830SzKx6_F6xaXKr2BWf2e8KALEpGBgGGyQR-Pn2AAjXqvNq0H5uXYW9qnJQdq5YlyR-Dt0BIPugX-P3ExXg1NJiWGAsdjb2KvvNV_OZOX4adMtnW7tLzmUkW98EbFOmuQ.txn_R9eqPP2ML1Q_8m_twa6Xu6kc6m99e315lOG13Zo&dib_tag=se&keywords=robo+aspirador&qid=1776870448&sr=8-26&ufe=app_do%3Aamzn1.fos.a492fd4a-f54d-4e8d-8c31-35e0a04ce61e",
+          "price": 3900
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1DmyZbP"
+        }
+      ]
+    },
+    {
+      "name": "Fritadeira Air Fryer Forno Oven Mondial 12L, Branco/Inox, 2200W, 220V - AFON-12L-WI",
+      "category": "eletrodomesticos",
+      "price": 470,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/gp/product/B0DVBLLRSP/ref=ox_sc_act_title_3?smid=A1ZZFT5FULY4LN&th=1",
+          "price": 470
+        }
+      ]
+    },
+    {
+      "name": "Purificador de Água Refrigerado",
+      "category": "eletrodomesticos",
+      "price": 419.88,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/PURIFICADOR-REFRIGERADO-EQUILIBRIUM-GRAFITE-RANGE/dp/B0BYT8HSBJ?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=1OL0KUOBG6Q37&dib=eyJ2IjoiMSJ9.7AMgzX-gKu8YLjer3uchb9jd3K3OvSROFkYUrAHqIbUYH2Yw2I14TOl5yOCkb6S17_b_VUHywkK0Mc3AnwMlIkRx3HKFc5IFWLz-9GdWorX6DvHVanUTPtHRB0ovSFTlKJofsJJTfH8__WpfPSIITJBQEKutwL-GU_BYJ9VROcmgEPC-O8aa9CeIIphVqQ1VvGu0ILx5Bhn2ajWxh11KzE_Q_iN795XgX6OkfI5Vn-Mxvp6xomJYRqDkRETLGNQH6JEjQtavqGVDhyx5hjEs4RXIsgxYVVQypFCbY4oAMxk.eLfLt8enkPWsssMNyu1GPn11mVvYpr5-2ePsG79rkyU&dib_tag=se&keywords=purificador%2Bde%2Bagua&qid=1746230591&sprefix=purificador%2Bde%2Bag%2Caps%2C245&sr=8-8&ufe=app_do%3Aamzn1.fos.e05b01e0-91a7-477e-a514-15a32325a6d6&th=1&linkCode=sl1&tag=marcha00-20&linkId=1dbdca278020ca0eaa0cf50bb0f24ea7&language=pt_BR&ref_=as_li_ss_tl",
+          "price": 419.88
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/18roLFX"
+        }
+      ]
+    },
+    {
+      "name": "Panela de Pressão",
+      "category": "eletrodomesticos",
+      "price": 379.05,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/dp/B0CXY6F62Z?ref=cm_sw_r_cso_wa_apin_dp_VQ7JP1A4NERTNZPSD2BB&ref_=cm_sw_r_cso_wa_apin_dp_VQ7JP1A4NERTNZPSD2BB&social_share=cm_sw_r_cso_wa_apin_dp_VQ7JP1A4NERTNZPSD2BB&th=1",
+          "price": 379.05
+        }
+      ]
+    },
+    {
+      "name": "Aspirador Pó Philco Vertical Power Clean 2000W PAS4000V 127V",
+      "category": "eletrodomesticos",
+      "price": 219,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/ASPIRADOR-PAS4000V-POWER-CLEAN-Preto/dp/B088MVWBM9/ref=asc_df_B088MVWBM9?mcid=0530c3f85f8f39bf95ab8ac1cecb853a&tag=googleshopp00-20&linkCode=df0&hvadid=709968341038&hvpos=&hvnetw=g&hvrand=10126750849311348074&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9238138&hvtargid=pla-934860413911&hvocijid=10126750849311348074-B088MVWBM9-&hvexpln=0&language=pt_BR&th=1",
+          "price": 219
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/2revptR"
+        }
+      ]
+    },
+    {
+      "name": "Jogo De Talheres Tramontina Churrasco Jumbo 12 Peças",
+      "category": "utensilios",
+      "price": 151.91,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/product/638399297/15327147248?exp_group=rollout&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRvS3L9OTXdZ5FJNxILig8p7lQ7pNpXYtdZAbsM8MQrkGmzJ0eOQRwaQfuYgAF9FAqYvxRTQ9oVrOjPOJqmNpcGhlcnRleHTElwAAAAziAZpGNZMK43pKcvPwriZSfvxoE9YELwJcVpHDB7TmYfYi9LZ9Q57HfL7AG8p_1I26wdfJDDVi5JFV7jfJoPu2SRuzm6yEVEWTNRVSGbOwOZqEXlweR_yZF8L1Bg8kNVe1OVjJXvMVpzpUTqzr-y0zhNQlV24ZcZHnc9yhMoOOPbifj6JiLd2jMdyC3noMkRRTe7g&mmp_pid=an_18352460206&uls_trackid=55fh1dd8006g&utm_campaign=id_vJZ9NcSSWf&utm_content=----&utm_medium=affiliates&utm_source=an_18352460206&utm_term=eshqhp8a1os5",
+          "price": 151.91
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1ooDhv5",
+          "price": 151.91
+        }
+      ]
+    },
+    {
+      "name": "Kit Para Pizza 14 Peças Pizza Laminas De Aço Inox",
+      "category": "utensilios",
+      "price": 170.75,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Pizza-Laminas-Polipropileno-Tramontina-25099022/dp/B076MC4VKM?source=ps-sl-shoppingads-lpcontext&ref_=fplfs&th=1",
+          "price": 170.75
+        }
+      ]
+    },
+    {
+      "name": "Kit De Pizza Tramontina 14 Peças - Aço Inox",
+      "category": "utensilios",
+      "price": 149.99,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Havan",
+          "url": "https://www.havan.com.br/kit-de-pizza-tramontina-14-pecas-ao-inox/p",
+          "price": 149.99
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/2Auddxz",
+          "price": 133
+        }
+      ]
+    },
+    {
+      "name": "Kit Churrasco Conjunto de 08 Peças Facas",
+      "category": "utensilios",
+      "price": 55.99,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/Kit-Churrasco-Conjunto-de-08-Pe%C3%A7as-Facas-Gourmet-Corte-Navalha-Antiaderente-Premium-Presente-Maleta-i.998773037.23598010279?extraParams=%7B%22display_model_id%22%3A159782558114%2C%22model_selection_logic%22%3A3%7D&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRvS3L9OTXdZ5FJNxILig8p7lQ7pNpXYtdZAbsM8MQrkGmzJ0eOQRwaQfuYgAF9FAqYvxRTQ9oVrOjPOJqmNpcGhlcnRleHTE7gAAAAyJeQ0hSXCQW2CWzGRKm2DB4ZDDsD-4_wbnEl-ivnufK_Ln45URnGq2Vt1YeVBb-9ASPl0xPLlJpEB12GKCIIerNew8zxUKsSKhXRcHydvaf3JrX_fg94cIX_-xZmFSzgDh4OZY-yDW8736DuPDZ039RG66zyn5ELQbQLVoEpx2o7wU9EcszMvCZunS3YIUB93tU9Kb-Q0Y3hMWXxlDggaQDRZjg4tVoxGnscZukhilQbhU54Ex61_fX8kQmtCdCD2e7SCI_QM_E26OTLRZJfuvUYUfyfDdOdfUoYugcSjdQ1qSQLzTpW2oWAE&mmp_pid=an_18191330011&uls_trackid=55fnsl29017d&utm_campaign=id_fdd20a4c5acb0e37&utm_content=wppfbads----&utm_medium=affiliates&utm_source=an_18191330011&utm_term=esnp8k93tmfv",
+          "price": 55.99
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1zAgsNF"
+        }
+      ]
+    },
+    {
+      "name": "Conjunto 24 Potes Herméticos Empilháveis Tampa Transparente",
+      "category": "utensilios",
+      "price": 95.39,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/29sJSfN"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Conjunto-24-Potes-Herm%C3%A9ticos-Empilhavel/dp/B0CNTZRX78/ref=srd_d_vsims_d_sccl_2_31/133-6744223-3766559?pd_rd_w=juqlj&content-id=amzn1.sym.c1a5d059-ff7a-4db2-81c0-6508b86c5855&pf_rd_p=c1a5d059-ff7a-4db2-81c0-6508b86c5855&pf_rd_r=4J55C93JSMHE0QWDGH7M&pd_rd_wg=Hx6ZF&pd_rd_r=7205ef2a-679e-445f-a933-f936ce8a2a21&pd_rd_i=B0CNTZRX78&psc=1",
+          "price": 95.39
+        }
+      ]
+    },
+    {
+      "name": "Conjunto De 9 Potes De Plástico Para Alimentos",
+      "category": "utensilios",
+      "price": 34.53,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Mercado Livre",
+          "url": "https://meli.la/1vzfmzR",
+          "price": 34.53
+        }
+      ]
+    },
+    {
+      "name": "Kit Conjunto de 5 Potes de Vidro Redondo, Tampa Plástica- Conjunto de Tigelas Redondas",
+      "category": "utensilios",
+      "price": 29.9,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Kit-Conjunto-Potes-Vidro-Redondo/dp/B0F7M4PCHK/ref=asc_df_B0F7M4PCHK?mcid=b4adabd5779c3b09a40a446cff12cc90&tag=googleshopp00-20&linkCode=df0&hvadid=759181789176&hvpos=&hvnetw=g&hvrand=10051196246116936383&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9238138&hvtargid=pla-2429874487915&psc=1&hvocijid=10051196246116936383-B0F7M4PCHK-&hvexpln=0&language=pt_BR",
+          "price": 29.9
+        }
+      ]
+    },
+    {
+      "name": "Sofá 4 Lugares Retrátil e Reclinável",
+      "category": "sala",
+      "price": 1708.99,
+      "status": "disponivel",
+      "suppliers": [
+        {
+          "name": "MadeiraMadeira",
+          "url": "https://www.madeiramadeira.com.br/sofa-retratil-reclinavel-zurique-2-50m-suede-velut-cinza-com-molas-no-assento-king-house-4123417.html",
+          "price": 1708.99
+        }
+      ]
+    },
+    {
+      "name": "Fogão de Indução",
+      "category": "eletrodomesticos",
+      "price": 1200,
+      "status": "comprado",
+      "suppliers": []
+    },
+    {
+      "name": "Multiprocessador Turbo Chef 5 Em 1",
+      "category": "eletrodomesticos",
+      "price": 315.26,
+      "status": "comprado",
+      "suppliers": []
+    },
+    {
+      "name": "Mixer Britânia BMX400P",
+      "category": "eletrodomesticos",
+      "price": 192.9,
+      "status": "comprado",
+      "suppliers": []
+    },
+    {
+      "name": "Jogo de Panelas",
+      "category": "utensilios",
+      "price": 630,
+      "status": "comprado",
+      "suppliers": []
+    },
+    {
+      "name": "TV 42 Polegadas",
+      "category": "sala",
+      "price": 1800,
+      "status": "comprado",
+      "suppliers": []
+    },
+    {
+      "name": "TV 32 Polegadas",
+      "category": "sala",
+      "price": 1300,
+      "status": "comprado",
+      "suppliers": []
+    },
+    {
+      "name": "Cama de Casal",
+      "category": "quarto",
+      "price": 3331.69,
+      "status": "comprado",
+      "suppliers": []
+    }
+  ]
+}
