@@ -110,11 +110,16 @@
                   try { suppliersArr = JSON.parse(product && product.suppliers ? product.suppliers : '[]'); } catch(e) {}
                   suppliersArr.forEach(function(s) {
                 %>
-                <div style="display:flex; gap:8px; align-items:center;">
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <input type="text" name="supplier_name[]" placeholder="Nome da loja (ex: Magazine Luiza)"
-                    value="<%= s.name || '' %>" class="form-control" style="flex:1;">
+                    value="<%= s.name || '' %>" class="form-control" style="flex:1; min-width:140px;">
+                  <input type="text" name="supplier_item[]" placeholder="Qual produto é (se o card tiver opções)"
+                    value="<%= s.item || '' %>" class="form-control" style="flex:2; min-width:180px;">
+                  <input type="text" name="supplier_price[]" placeholder="Preço"
+                    value="<%= s.price || '' %>" class="form-control" style="width:100px;">
                   <input type="text" name="supplier_url[]" placeholder="Link do produto (https://...)"
-                    value="<%= s.url || '' %>" class="form-control" style="flex:2;">
+                    value="<%= s.url || '' %>" class="form-control" style="flex:2; min-width:180px;">
+                  <input type="hidden" name="supplier_image[]" value="<%= s.image || '' %>">
                   <button type="button" onclick="this.parentElement.remove()"
                     style="background:none;border:none;cursor:pointer;font-size:1.5rem;color:#dc3545;padding:4px 8px;line-height:1;">×</button>
                 </div>
@@ -123,7 +128,8 @@
               <button type="button" onclick="addSupplier()" class="btn btn-outline btn-sm">
                 ➕ Adicionar loja
               </button>
-              <p class="form-hint">Adicione os links das lojas onde o convidado pode comprar este produto.</p>
+              <p class="form-hint">Adicione os links das lojas onde o convidado pode comprar este produto.
+                Se o card reunir produtos equivalentes, preencha "Qual produto é" em cada linha.</p>
             </div>
 
             <div class="form-group">
@@ -153,26 +159,32 @@
   function addSupplier() {
     var list = document.getElementById('suppliers-list');
     var row  = document.createElement('div');
-    row.style.cssText = 'display:flex; gap:8px; align-items:center;';
-    var nameInput = document.createElement('input');
-    nameInput.type = 'text';
-    nameInput.name = 'supplier_name[]';
-    nameInput.placeholder = 'Nome da loja (ex: Magazine Luiza)';
-    nameInput.className = 'form-control';
-    nameInput.style.flex = '1';
-    var urlInput = document.createElement('input');
-    urlInput.type = 'text';
-    urlInput.name = 'supplier_url[]';
-    urlInput.placeholder = 'Link do produto (https://...)';
-    urlInput.className = 'form-control';
-    urlInput.style.flex = '2';
+    row.style.cssText = 'display:flex; gap:8px; align-items:center; flex-wrap:wrap;';
+    // Todas as linhas levam os mesmos campos, na mesma ordem das já salvas
+    function campo(name, placeholder, css, type) {
+      var input = document.createElement('input');
+      input.type = type || 'text';
+      input.name = name;
+      input.placeholder = placeholder;
+      input.className = 'form-control';
+      input.style.cssText = css;
+      return input;
+    }
+    var nameInput  = campo('supplier_name[]',  'Nome da loja (ex: Magazine Luiza)', 'flex:1; min-width:140px;');
+    var itemInput  = campo('supplier_item[]',  'Qual produto é (se o card tiver opções)', 'flex:2; min-width:180px;');
+    var priceInput = campo('supplier_price[]', 'Preço', 'width:100px;');
+    var urlInput   = campo('supplier_url[]',   'Link do produto (https://...)', 'flex:2; min-width:180px;');
+    var imageInput = campo('supplier_image[]', '', '', 'hidden');
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.innerHTML = '&times;';
     btn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:1.5rem;color:#dc3545;padding:4px 8px;line-height:1;';
     btn.onclick = function() { row.remove(); };
     row.appendChild(nameInput);
+    row.appendChild(itemInput);
+    row.appendChild(priceInput);
     row.appendChild(urlInput);
+    row.appendChild(imageInput);
     row.appendChild(btn);
     list.appendChild(row);
   }

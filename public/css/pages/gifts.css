@@ -380,6 +380,41 @@
 .supplier-price {
   font-weight: var(--font-bold);
   color: var(--color-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: var(--space-3);
+}
+
+/* Opções de um mesmo presente (produtos equivalentes no mesmo card) */
+.supplier-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  text-align: left;
+}
+
+.supplier-thumb {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: white;
+}
+
+.supplier-item {
+  display: block;
+  font-weight: var(--font-semibold);
+  line-height: 1.35;
+}
+
+.supplier-store {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
 }
 
 /* Aviso de modelo exato */

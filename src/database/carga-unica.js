@@ -144,12 +144,108 @@ async function cargaRetirada(client) {
   return `${retirados} produtos retirados da lista.`;
 }
 
+// Out/2026 — produtos equivalentes passam a dividir um card só: o produto
+// `juntar` vira opção dentro de "Comprar direto no fornecedor" do `principal`.
+const GRUPOS = [
+  { principal: 'Kit 6 Pçs Jogo Americano Redondo Sousplat - Lugar Americano',
+    juntar: ['Kit Jogo Americano Pistache Com Cru 6 Lug. Mesa Posta'] },
+  { principal: 'Aparelho de Jantar Verde Escuro 36 Peças',
+    juntar: ['Aparelho de Jantar Porto Brasil Orgânico Arauco 30 Peças'] },
+  { principal: 'Conjunto Mesa Jantar 1,20m Off-white 4 Cadeiras Linho Bege',
+    juntar: ['Sala de Jantar 130x90 Mavie Vidro Off 4 Cadeiras Bom Pastor Off-white Naturale Linho Off'] },
+  { principal: 'Kit Churrasco Conjunto de 08 Peças Facas',
+    juntar: ['Jogo De Talheres Tramontina Churrasco Jumbo 12 Peças'] },
+  { principal: 'Kit De Pizza Tramontina 14 Peças - Aço Inox',
+    juntar: ['Kit Para Pizza 14 Peças Pizza Laminas De Aço Inox'],
+    // o link do Mercado Livre vende a versão vermelha do kit
+    miniaturas: [{ url: 'https://meli.la/2Auddxz', image: '/images/produtos/kit-pizza-tramontina-14-pecas-vermelho.webp' }] },
+  { principal: 'Kit Conjunto de 5 Potes de Vidro Redondo, Tampa Plástica- Conjunto de Tigelas Redondas',
+    juntar: [],
+    opcoes: [{ name: 'Mercado Livre', url: 'https://meli.la/2vabRpe', item: 'Conjunto 5 Potes De Vidro Com Tampa Redondo Tipo Bowl Promo' }] },
+];
+
+const FOTOS_NOVAS = [
+  { name: 'Sofá 4 Lugares Retrátil e Reclinável', image: '/images/produtos/sofa-retratil-reclinavel-zurique.webp' },
+  { name: 'Aspirador Pó Philco Vertical Power Clean 2000W PAS4000V 127V', image: '/images/produtos/aspirador-de-po-philco-pas4000v.webp' },
+];
+
+const ORDEM_STATUS = ['disponivel', 'reservado', 'aguardando_validacao', 'comprado'];
+
+async function cargaAgrupamento(client) {
+  for (const f of FOTOS_NOVAS) {
+    await client.query(
+      `UPDATE products SET image_url = $2::text, updated_at = CURRENT_TIMESTAMP
+       WHERE name = $1::text AND (image_url IS NULL OR image_url = '' OR image_url LIKE '%placeholder%')`,
+      [f.name, f.image]
+    );
+  }
+
+  const buscar = async (name) => {
+    const { rows } = await client.query(
+      `SELECT id, name, status, image_url, suppliers FROM products WHERE name = $1::text ORDER BY id LIMIT 1`,
+      [name]
+    );
+    return rows[0];
+  };
+
+  // As lojas de um produto viram opções: cada uma diz qual produto é e leva a foto dele
+  const comoOpcoes = (p) => {
+    let lojas = [];
+    try { lojas = JSON.parse(p.suppliers || '[]'); } catch { /* fica sem lojas */ }
+    return lojas.map((s) => Object.assign({}, s, { item: s.item || p.name }, !s.image && p.image_url ? { image: p.image_url } : {}));
+  };
+
+  let juntados = 0;
+  for (const g of GRUPOS) {
+    const principal = await buscar(g.principal);
+    if (!principal) continue; // renomeado ou apagado no admin: não mexe
+
+    let opcoes = comoOpcoes(principal);
+    let status = principal.status;
+
+    for (const nome of g.juntar) {
+      const outro = await buscar(nome);
+      if (!outro) continue;
+      opcoes = opcoes.concat(comoOpcoes(outro));
+      if (ORDEM_STATUS.indexOf(outro.status) > ORDEM_STATUS.indexOf(status)) status = outro.status;
+
+      // Comprovantes e contribuições do produto que some passam para o card que fica
+      await client.query(`UPDATE receipts SET product_id = $1::int WHERE product_id = $2::int`, [principal.id, outro.id]);
+      await client.query(`UPDATE contributions SET product_id = $1::int WHERE product_id = $2::int`, [principal.id, outro.id]);
+      await client.query(`DELETE FROM products WHERE id = $1::int`, [outro.id]);
+      juntados++;
+    }
+
+    for (const extra of g.opcoes || []) {
+      if (!opcoes.some((o) => o.url === extra.url)) opcoes.push(extra);
+    }
+    for (const m of g.miniaturas || []) {
+      const opcao = opcoes.find((o) => o.url === m.url);
+      if (opcao) opcao.image = m.image;
+    }
+
+    await client.query(
+      `UPDATE products SET suppliers = $2::text, status = $3::text, updated_at = CURRENT_TIMESTAMP WHERE id = $1::int`,
+      [principal.id, JSON.stringify(opcoes), status]
+    );
+  }
+
+  return `${juntados} produtos passaram a ser opção dentro de outro card.`;
+}
+
+// Em ordem: cada carga parte do que a anterior deixou. Se uma falhar, as
+// seguintes esperam o próximo início.
+const CARGAS = [
+  ['carga_unica_2026_10',        cargaProdutos],
+  ['carga_fotos_2026_10',        cargaFotos],
+  ['retirada_comprados_2026_10', cargaRetirada],
+  ['agrupamento_2026_10',        cargaAgrupamento],
+];
+
 async function aplicarCargaUnica(pool) {
-  // As demais dependem dos produtos: se a primeira carga falhar, elas esperam
-  const ok = await executarUmaVez(pool, 'carga_unica_2026_10', cargaProdutos);
-  if (!ok) return;
-  await executarUmaVez(pool, 'carga_fotos_2026_10', cargaFotos);
-  await executarUmaVez(pool, 'retirada_comprados_2026_10', cargaRetirada);
+  for (const [marca, aplicar] of CARGAS) {
+    if (!(await executarUmaVez(pool, marca, aplicar))) return;
+  }
 }
 
 module.exports = { aplicarCargaUnica };

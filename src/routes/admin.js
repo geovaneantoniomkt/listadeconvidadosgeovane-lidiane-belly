@@ -126,14 +126,33 @@ router.get('/produtos/:id/editar', requireAuth, async (req, res) => {
   } catch (err) { console.error(err); res.status(500).send('Erro interno'); }
 });
 
+// "1.289,90" ou "1289.9" -> 1289.9
+function parsePrice(text) {
+  const t = String(text || '').trim();
+  const n = parseFloat(t.includes(',') ? t.replace(/\./g, '').replace(',', '.') : t);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
 function buildSuppliersJson(body) {
-  const names  = [].concat(body.supplier_name || []);
-  const urls   = [].concat(body.supplier_url  || []);
+  const names  = [].concat(body.supplier_name  || []);
+  const urls   = [].concat(body.supplier_url   || []);
+  const items  = [].concat(body.supplier_item  || []);
+  const prices = [].concat(body.supplier_price || []);
+  const images = [].concat(body.supplier_image || []);
   const result = [];
   names.forEach((name, i) => {
     const n = (name || '').trim();
     const u = (urls[i] || '').trim();
-    if (n || u) result.push({ name: n, url: u });
+    if (!n && !u) return;
+    const supplier = { name: n, url: u };
+    // Opcionais: qual produto é (cards com opções), preço na loja e miniatura
+    const item  = (items[i]  || '').trim();
+    const price = parsePrice(prices[i]);
+    const image = (images[i] || '').trim();
+    if (item)  supplier.item  = item;
+    if (price) supplier.price = price;
+    if (image) supplier.image = image;
+    result.push(supplier);
   });
   return JSON.stringify(result);
 }
