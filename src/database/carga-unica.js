@@ -277,6 +277,42 @@ async function cargaFotosExtras(client) {
   return `${ligadas} fotos ligadas a cards e opções.`;
 }
 
+// Out/2026 — andamento da obra conforme o portal da construtora (Agosto/2026)
+const OBRA = {
+  geral: '89.17',
+  atualizacao: 'Agosto/2026',
+  etapas: {
+    'Serviços Preliminares':  100,
+    'Fundação':               100,
+    'Estrutura':              99.01,
+    'Instalações':            76.49,
+    'Revestimentos Internos': 90.01,
+    'Revestimentos Externos': 76.31,
+    'Pintura':                63.96,
+  },
+};
+
+async function cargaObra(client) {
+  for (const [key, value] of [['construction_overall', OBRA.geral], ['construction_last_update', OBRA.atualizacao]]) {
+    await client.query(
+      `INSERT INTO settings (key, value) VALUES ($1, $2)
+       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP`,
+      [key, value]
+    );
+  }
+
+  let etapas = 0;
+  for (const [name, percentage] of Object.entries(OBRA.etapas)) {
+    const res = await client.query(
+      `UPDATE construction_stages SET percentage = $2::numeric, updated_at = CURRENT_TIMESTAMP WHERE name = $1::text`,
+      [name, percentage]
+    );
+    etapas += res.rowCount;
+  }
+
+  return `andamento da obra em ${OBRA.geral}% (${OBRA.atualizacao}), ${etapas} etapas atualizadas.`;
+}
+
 // Em ordem: cada carga parte do que a anterior deixou. Se uma falhar, as
 // seguintes esperam o próximo início.
 const CARGAS = [
@@ -285,6 +321,7 @@ const CARGAS = [
   ['retirada_comprados_2026_10', cargaRetirada],
   ['agrupamento_2026_10',        cargaAgrupamento],
   ['fotos_extras_2026_10',       cargaFotosExtras],
+  ['obra_2026_08',               cargaObra],
 ];
 
 async function aplicarCargaUnica(pool) {
