@@ -110,10 +110,46 @@ async function cargaFotos(client) {
   return `${comFoto} produtos receberam foto.`;
 }
 
+// Out/2026 — retirada dos itens que a família já tinha comprado por conta própria
+const RETIRAR = [
+  'Cama de Casal',
+  'TV 42 Polegadas',
+  'TV 32 Polegadas',
+  'Jogo de Panelas',
+  'Fogão de Indução',
+  'Mixer Britânia BMX400P',
+  'Multiprocessador Turbo Chef 5 Em 1',
+];
+
+async function cargaRetirada(client) {
+  let retirados = 0;
+  for (const name of RETIRAR) {
+    // Produto com comprovante ou contribuição ligada fica: apagar perderia esse registro
+    const res = await client.query(
+      `DELETE FROM products p
+       WHERE p.name = $1::text
+         AND NOT EXISTS (SELECT 1 FROM receipts r WHERE r.product_id = p.id)
+         AND NOT EXISTS (SELECT 1 FROM contributions c WHERE c.product_id = p.id)`,
+      [name]
+    );
+    retirados += res.rowCount;
+  }
+
+  // "Quarto" só tinha a cama: sem produtos, sai do filtro de categorias
+  await client.query(
+    `DELETE FROM categories c
+     WHERE c.slug = 'quarto' AND NOT EXISTS (SELECT 1 FROM products p WHERE p.category_id = c.id)`
+  );
+
+  return `${retirados} produtos retirados da lista.`;
+}
+
 async function aplicarCargaUnica(pool) {
-  // As fotos dependem dos produtos: se a primeira carga falhar, a segunda espera
+  // As demais dependem dos produtos: se a primeira carga falhar, elas esperam
   const ok = await executarUmaVez(pool, 'carga_unica_2026_10', cargaProdutos);
-  if (ok) await executarUmaVez(pool, 'carga_fotos_2026_10', cargaFotos);
+  if (!ok) return;
+  await executarUmaVez(pool, 'carga_fotos_2026_10', cargaFotos);
+  await executarUmaVez(pool, 'retirada_comprados_2026_10', cargaRetirada);
 }
 
 module.exports = { aplicarCargaUnica };
