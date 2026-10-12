@@ -208,21 +208,46 @@
 
     <!-- Etapas -->
     <% if (constructionStages && constructionStages.length > 0) { %>
-    <div class="fade-in" style="background: white; border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
-      <h3 style="font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-5);">Detalhes por Etapa</h3>
-      <div style="display: flex; flex-direction: column; gap: var(--space-4);">
-        <% constructionStages.forEach(stage => { %>
-        <div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);">
-            <span style="font-size: var(--text-sm); font-weight: 600;"><%= stage.name %></span>
-            <span style="font-size: var(--text-sm); font-weight: 700; color: <%= stage.percentage >= 100 ? 'var(--color-success)' : 'var(--color-primary)' %>;"><%= parseFloat(stage.percentage).toFixed(2) %>%</span>
+    <% const obraPhotos = constructionPhotos || []; %>
+    <div class="fade-in obra-details <%= obraPhotos.length > 0 ? 'obra-details-with-photos' : '' %>" style="background: white; border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
+      <div>
+        <h3 style="font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-5);">Detalhes por Etapa</h3>
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <% constructionStages.forEach(stage => { %>
+          <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);">
+              <span style="font-size: var(--text-sm); font-weight: 600;"><%= stage.name %></span>
+              <span style="font-size: var(--text-sm); font-weight: 700; color: <%= stage.percentage >= 100 ? 'var(--color-success)' : 'var(--color-primary)' %>;"><%= parseFloat(stage.percentage).toFixed(2) %>%</span>
+            </div>
+            <div style="background: var(--color-border); border-radius: var(--radius-full); height: 10px; overflow: hidden;">
+              <div style="height: 100%; width: <%= stage.percentage %>%; background: <%= stage.percentage >= 100 ? 'var(--color-success)' : 'var(--color-primary)' %>; border-radius: var(--radius-full);"></div>
+            </div>
           </div>
-          <div style="background: var(--color-border); border-radius: var(--radius-full); height: 10px; overflow: hidden;">
-            <div style="height: 100%; width: <%= stage.percentage %>%; background: <%= stage.percentage >= 100 ? 'var(--color-success)' : 'var(--color-primary)' %>; border-radius: var(--radius-full);"></div>
-          </div>
+          <% }) %>
         </div>
-        <% }) %>
       </div>
+
+      <!-- Fotos da obra (carrossel automático) -->
+      <% if (obraPhotos.length > 0) { %>
+      <div class="obra-carousel" id="obraCarousel" role="group" aria-roledescription="carrossel" aria-label="Fotos da obra">
+        <% obraPhotos.forEach((photo, i) => { %>
+        <figure class="obra-slide <%= i === 0 ? 'active' : '' %>">
+          <%# só a primeira carrega de início; as demais entram conforme o carrossel avança %>
+          <img <%- i === 0 ? 'src' : 'data-src' %>="<%= photo.src %>" alt="Foto da obra em <%= photo.label %>">
+          <figcaption>📸 <%= photo.label %></figcaption>
+        </figure>
+        <% }) %>
+        <% if (obraPhotos.length > 1) { %>
+        <button type="button" class="obra-nav obra-prev" aria-label="Foto anterior">‹</button>
+        <button type="button" class="obra-nav obra-next" aria-label="Próxima foto">›</button>
+        <div class="obra-dots">
+          <% obraPhotos.forEach((photo, i) => { %>
+          <button type="button" class="obra-dot <%= i === 0 ? 'active' : '' %>" aria-label="Ver foto de <%= photo.label %>"></button>
+          <% }) %>
+        </div>
+        <% } %>
+      </div>
+      <% } %>
     </div>
     <% } %>
 
@@ -280,6 +305,84 @@
 
   update();
   setInterval(update, 1000);
+})();
+</script>
+
+<!-- Script carrossel de fotos da obra -->
+<script>
+(function() {
+  var root = document.getElementById('obraCarousel');
+  if (!root) return;
+
+  var slides = root.querySelectorAll('.obra-slide');
+  var dots = root.querySelectorAll('.obra-dot');
+  if (slides.length < 2) return;
+
+  var INTERVALO = 4500;
+  var atual = 0;
+  var timer = null;
+  var semMovimento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function carregar(i) {
+    var img = slides[i].querySelector('img');
+    if (img.getAttribute('data-src')) {
+      img.src = img.getAttribute('data-src');
+      img.removeAttribute('data-src');
+    }
+  }
+
+  function mostrar(i) {
+    atual = (i + slides.length) % slides.length;
+    carregar(atual);
+    carregar((atual + 1) % slides.length); // já deixa a próxima pronta
+    for (var k = 0; k < slides.length; k++) {
+      slides[k].classList.toggle('active', k === atual);
+      if (dots[k]) dots[k].classList.toggle('active', k === atual);
+    }
+  }
+
+  function parar() {
+    clearInterval(timer);
+    timer = null;
+  }
+
+  function iniciar() {
+    if (semMovimento || timer) return;
+    timer = setInterval(function() { mostrar(atual + 1); }, INTERVALO);
+  }
+
+  // Troca manual: mostra e recomeça a contagem do intervalo
+  function ir(i) {
+    parar();
+    mostrar(i);
+    iniciar();
+  }
+
+  root.querySelector('.obra-prev').addEventListener('click', function() { ir(atual - 1); });
+  root.querySelector('.obra-next').addEventListener('click', function() { ir(atual + 1); });
+  for (var d = 0; d < dots.length; d++) {
+    (function(i) { dots[i].addEventListener('click', function() { ir(i); }); })(d);
+  }
+
+  // Pausa enquanto a pessoa olha a foto ou a aba está escondida
+  root.addEventListener('mouseenter', parar);
+  root.addEventListener('mouseleave', iniciar);
+  root.addEventListener('focusin', parar);
+  root.addEventListener('focusout', iniciar);
+  document.addEventListener('visibilitychange', function() { document.hidden ? parar() : iniciar(); });
+
+  // Arrastar com o dedo
+  var toqueX = null;
+  root.addEventListener('touchstart', function(e) { toqueX = e.touches[0].clientX; }, { passive: true });
+  root.addEventListener('touchend', function(e) {
+    if (toqueX === null) return;
+    var dx = e.changedTouches[0].clientX - toqueX;
+    toqueX = null;
+    if (Math.abs(dx) > 40) ir(dx < 0 ? atual + 1 : atual - 1);
+  });
+
+  mostrar(0);
+  iniciar();
 })();
 </script>
 

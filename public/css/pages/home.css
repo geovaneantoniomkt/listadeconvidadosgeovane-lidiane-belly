@@ -338,6 +338,105 @@
   justify-content: center;
 }
 
+/* ─── OBRA: etapas + carrossel de fotos ─── */
+.obra-details-with-photos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: center;
+}
+
+.obra-carousel {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg-subtle);
+}
+
+.obra-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s;
+}
+
+.obra-slide.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.obra-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.obra-slide figcaption {
+  position: absolute;
+  left: var(--space-3);
+  top: var(--space-3);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+}
+
+.obra-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--color-text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.obra-nav:hover { background: white; }
+.obra-prev { left: var(--space-3); }
+.obra-next { right: var(--space-3); }
+
+.obra-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--space-3);
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.obra-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.obra-dot.active {
+  background: white;
+  transform: scale(1.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .obra-slide { transition: none; }
+}
+
 /* ─── GRATIDÃO ─── */
 .gratitude-block {
   background: linear-gradient(135deg, var(--color-secondary-soft), var(--color-accent-soft));
@@ -366,6 +465,7 @@
   .history-preview { grid-template-columns: 1fr; }
   .history-preview-visual { display: none; }
   .family-grid { grid-template-columns: 1fr; }
+  .obra-details-with-photos { grid-template-columns: 1fr; gap: var(--space-6); }
 }
 
 @media (max-width: 768px) {

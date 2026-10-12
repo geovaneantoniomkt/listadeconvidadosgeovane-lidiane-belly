@@ -2,9 +2,30 @@
 // ROTAS PÚBLICAS DO SITE
 // ================================================
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 const db = require('../database/db');
 const { uploadReceipt } = require('../middleware/upload');
+
+// Fotos da obra para o carrossel da home: arquivos AAAA-MM em public/images/obra,
+// da mais recente para a mais antiga. Para incluir um mês, basta adicionar o arquivo.
+const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+function listConstructionPhotos() {
+  try {
+    return fs.readdirSync(path.join(__dirname, '../../public/images/obra'))
+      .map(file => file.match(/^(\d{4})-(0[1-9]|1[0-2])\.(webp|jpe?g|png)$/i))
+      .filter(Boolean)
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .map(m => ({ src: `/images/obra/${m[0]}`, label: `${MESES[parseInt(m[2], 10) - 1]}/${m[1]}` }));
+  } catch {
+    return [];
+  }
+}
+
+// Os arquivos só mudam a cada deploy: lê uma vez ao iniciar
+const constructionPhotos = listConstructionPhotos();
 
 // Helper: busca uma configuração
 async function getSetting(key) {
@@ -85,7 +106,7 @@ router.get('/', async (req, res) => {
 
     const constructionStages = await db.all('SELECT * FROM construction_stages ORDER BY sort_order ASC');
 
-    res.render('pages/home', { settings, goal, featured, stats, constructionStages, page: 'home' });
+    res.render('pages/home', { settings, goal, featured, stats, constructionStages, constructionPhotos, page: 'home' });
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro interno');
