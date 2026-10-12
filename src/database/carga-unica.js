@@ -85,17 +85,22 @@ async function cargaProdutos(client) {
   return `${inseridos} produtos inseridos, link do Mercado Pago e prazo atualizados.`;
 }
 
-// Out/2026 — fotos dos produtos (arquivos em public/images/produtos)
+// Liga uma foto (arquivo em public/images/produtos) ao card de um produto.
+// Só preenche quem está sem foto: imagem enviada pelo admin não é trocada.
+async function fotoDoCard(client, name, image) {
+  const res = await client.query(
+    `UPDATE products SET image_url = $2::text, updated_at = CURRENT_TIMESTAMP
+     WHERE name = $1::text AND (image_url IS NULL OR image_url = '' OR image_url LIKE '%placeholder%')`,
+    [name, image]
+  );
+  return res.rowCount;
+}
+
+// Out/2026 — fotos dos produtos
 async function cargaFotos(client) {
   let comFoto = 0;
   for (const f of fotos) {
-    // Só preenche quem está sem foto: imagem enviada pelo admin não é trocada
-    const res = await client.query(
-      `UPDATE products SET image_url = $2::text, updated_at = CURRENT_TIMESTAMP
-       WHERE name = $1::text AND (image_url IS NULL OR image_url = '' OR image_url LIKE '%placeholder%')`,
-      [f.name, f.image]
-    );
-    comFoto += res.rowCount;
+    comFoto += await fotoDoCard(client, f.name, f.image);
 
     // Nome da planilha que não batia com o produto do link
     if (f.rename) {
@@ -172,13 +177,7 @@ const FOTOS_NOVAS = [
 const ORDEM_STATUS = ['disponivel', 'reservado', 'aguardando_validacao', 'comprado'];
 
 async function cargaAgrupamento(client) {
-  for (const f of FOTOS_NOVAS) {
-    await client.query(
-      `UPDATE products SET image_url = $2::text, updated_at = CURRENT_TIMESTAMP
-       WHERE name = $1::text AND (image_url IS NULL OR image_url = '' OR image_url LIKE '%placeholder%')`,
-      [f.name, f.image]
-    );
-  }
+  for (const f of FOTOS_NOVAS) await fotoDoCard(client, f.name, f.image);
 
   const buscar = async (name) => {
     const { rows } = await client.query(
@@ -233,6 +232,51 @@ async function cargaAgrupamento(client) {
   return `${juntados} produtos passaram a ser opção dentro de outro card.`;
 }
 
+// Out/2026 — fotos que chegaram depois do agrupamento
+const POTES_DE_VIDRO = 'Kit Conjunto de 5 Potes de Vidro Redondo, Tampa Plástica- Conjunto de Tigelas Redondas';
+
+const FOTOS_DE_CARDS = [
+  { name: POTES_DE_VIDRO, image: '/images/produtos/kit-5-potes-de-vidro.webp' },
+];
+
+// Miniatura de uma opção dentro de um card: `item` é o produto da opção
+const FOTOS_DE_OPCOES = [
+  { produto: POTES_DE_VIDRO, item: POTES_DE_VIDRO, image: '/images/produtos/kit-5-potes-de-vidro.webp' },
+  { produto: 'Kit 6 Pçs Jogo Americano Redondo Sousplat - Lugar Americano',
+    item: 'Kit Jogo Americano Pistache Com Cru 6 Lug. Mesa Posta',
+    image: '/images/produtos/jogo-americano-pistache.webp' },
+];
+
+async function cargaFotosExtras(client) {
+  let ligadas = 0;
+
+  for (const f of FOTOS_DE_CARDS) ligadas += await fotoDoCard(client, f.name, f.image);
+
+  for (const f of FOTOS_DE_OPCOES) {
+    const { rows } = await client.query(
+      `SELECT id, suppliers FROM products WHERE name = $1::text ORDER BY id LIMIT 1`,
+      [f.produto]
+    );
+    if (!rows[0]) continue;
+
+    let lojas;
+    try { lojas = JSON.parse(rows[0].suppliers || '[]'); } catch { continue; }
+
+    // Só preenche opção sem miniatura: o que foi mexido no admin fica
+    const semFoto = lojas.filter((s) => s.item === f.item && !s.image);
+    if (semFoto.length === 0) continue;
+    semFoto.forEach((s) => { s.image = f.image; });
+    ligadas += semFoto.length;
+
+    await client.query(
+      `UPDATE products SET suppliers = $2::text, updated_at = CURRENT_TIMESTAMP WHERE id = $1::int`,
+      [rows[0].id, JSON.stringify(lojas)]
+    );
+  }
+
+  return `${ligadas} fotos ligadas a cards e opções.`;
+}
+
 // Em ordem: cada carga parte do que a anterior deixou. Se uma falhar, as
 // seguintes esperam o próximo início.
 const CARGAS = [
@@ -240,6 +284,7 @@ const CARGAS = [
   ['carga_fotos_2026_10',        cargaFotos],
   ['retirada_comprados_2026_10', cargaRetirada],
   ['agrupamento_2026_10',        cargaAgrupamento],
+  ['fotos_extras_2026_10',       cargaFotosExtras],
 ];
 
 async function aplicarCargaUnica(pool) {
