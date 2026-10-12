@@ -1,20 +1,22 @@
 // ================================================
-// CARGA ÚNICA — produtos da planilha + ajustes de configuração (out/2026)
+// CARGAS ÚNICAS — dados que entram no banco pelo código
 //
-// Roda uma única vez por banco: ao concluir, grava uma marca em `settings`.
-// Depois disso tudo é editado pelo painel admin e nunca mais é sobrescrito
-// (apagar um produto ou trocar o link no admin não é desfeito no próximo deploy).
+// Cada carga roda uma única vez por banco: ao concluir, grava sua marca em
+// `settings`. Depois disso tudo é editado pelo painel admin e nunca mais é
+// sobrescrito (apagar um produto ou trocar o link no admin não é desfeito no
+// próximo deploy).
 // ================================================
 const { categorias, produtos } = require('./carga-unica.json');
-
-const MARCA = 'carga_unica_2026_10';
+const fotos = require('./carga-fotos.json');
 
 const CONFIGURACOES = {
   mercadopago_link: 'https://link.mercadopago.com.br/listadepresentegeo',
   delivery_date:    '2027-01-28',
 };
 
-async function aplicarCargaUnica(pool) {
+// Aplica `aplicar` dentro de uma transação, uma única vez por `marca`.
+// Devolve false só quando a carga falhou (e foi desfeita por inteiro).
+async function executarUmaVez(pool, marca, aplicar) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -22,57 +24,96 @@ async function aplicarCargaUnica(pool) {
     // A marca entra primeiro: se já existe, a carga foi aplicada antes
     const { rowCount } = await client.query(
       `INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING`,
-      [MARCA, new Date().toISOString()]
+      [marca, new Date().toISOString()]
     );
     if (rowCount === 0) {
       await client.query('ROLLBACK');
-      return;
+      return true;
     }
 
-    for (const [key, value] of Object.entries(CONFIGURACOES)) {
-      await client.query(
-        `INSERT INTO settings (key, value) VALUES ($1, $2)
-         ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP`,
-        [key, value]
-      );
-    }
-
-    const categoryIds = {};
-    for (const c of categorias) {
-      await client.query(
-        `INSERT INTO categories (name, slug, icon) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
-        [c.name, c.slug, c.icon]
-      );
-      const { rows } = await client.query(
-        `SELECT id FROM categories WHERE slug = $1::text OR name = $2::text ORDER BY (slug = $1::text) DESC LIMIT 1`,
-        [c.slug, c.name]
-      );
-      categoryIds[c.slug] = rows[0].id;
-    }
-
-    // created_at decrescente mantém a ordem do arquivo na listagem (ORDER BY created_at DESC)
-    let inseridos = 0;
-    for (const [i, p] of produtos.entries()) {
-      const res = await client.query(
-        `INSERT INTO products (name, price, category_id, status, specs, suppliers, created_at, updated_at)
-         SELECT $1::text, $2::numeric, $3::int, $4::text, '{}', $5::text,
-                CURRENT_TIMESTAMP - ($6::int * INTERVAL '1 second'),
-                CURRENT_TIMESTAMP - ($6::int * INTERVAL '1 second')
-         WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = $1::text)`,
-        [p.name, p.price, categoryIds[p.category], p.status, JSON.stringify(p.suppliers), i]
-      );
-      inseridos += res.rowCount;
-    }
-
+    const resumo = await aplicar(client);
     await client.query('COMMIT');
-    console.log(`✅ Carga única aplicada: ${inseridos} produtos inseridos, link do Mercado Pago e prazo atualizados.`);
+    console.log(`✅ Carga única aplicada: ${resumo}`);
+    return true;
   } catch (err) {
     await client.query('ROLLBACK').catch(() => {});
-    // Não derruba o site: a carga é desfeita por inteiro e tenta de novo no próximo início
-    console.error('⚠️ Carga única não aplicada:', err.message);
+    // Não derruba o site: a carga é desfeita e tenta de novo no próximo início
+    console.error(`⚠️ Carga única "${marca}" não aplicada:`, err.message);
+    return false;
   } finally {
     client.release();
   }
+}
+
+// Out/2026 — produtos da planilha, link do Mercado Pago e prazo de entrega
+async function cargaProdutos(client) {
+  for (const [key, value] of Object.entries(CONFIGURACOES)) {
+    await client.query(
+      `INSERT INTO settings (key, value) VALUES ($1, $2)
+       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP`,
+      [key, value]
+    );
+  }
+
+  const categoryIds = {};
+  for (const c of categorias) {
+    await client.query(
+      `INSERT INTO categories (name, slug, icon) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
+      [c.name, c.slug, c.icon]
+    );
+    const { rows } = await client.query(
+      `SELECT id FROM categories WHERE slug = $1::text OR name = $2::text ORDER BY (slug = $1::text) DESC LIMIT 1`,
+      [c.slug, c.name]
+    );
+    categoryIds[c.slug] = rows[0].id;
+  }
+
+  // created_at decrescente mantém a ordem do arquivo na listagem (ORDER BY created_at DESC)
+  let inseridos = 0;
+  for (const [i, p] of produtos.entries()) {
+    const res = await client.query(
+      `INSERT INTO products (name, price, category_id, status, specs, suppliers, created_at, updated_at)
+       SELECT $1::text, $2::numeric, $3::int, $4::text, '{}', $5::text,
+              CURRENT_TIMESTAMP - ($6::int * INTERVAL '1 second'),
+              CURRENT_TIMESTAMP - ($6::int * INTERVAL '1 second')
+       WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = $1::text)`,
+      [p.name, p.price, categoryIds[p.category], p.status, JSON.stringify(p.suppliers), i]
+    );
+    inseridos += res.rowCount;
+  }
+
+  return `${inseridos} produtos inseridos, link do Mercado Pago e prazo atualizados.`;
+}
+
+// Out/2026 — fotos dos produtos (arquivos em public/images/produtos)
+async function cargaFotos(client) {
+  let comFoto = 0;
+  for (const f of fotos) {
+    // Só preenche quem está sem foto: imagem enviada pelo admin não é trocada
+    const res = await client.query(
+      `UPDATE products SET image_url = $2::text, updated_at = CURRENT_TIMESTAMP
+       WHERE name = $1::text AND (image_url IS NULL OR image_url = '' OR image_url LIKE '%placeholder%')`,
+      [f.name, f.image]
+    );
+    comFoto += res.rowCount;
+
+    // Nome da planilha que não batia com o produto do link
+    if (f.rename) {
+      await client.query(
+        `UPDATE products SET name = $2::text, updated_at = CURRENT_TIMESTAMP
+         WHERE name = $1::text AND NOT EXISTS (SELECT 1 FROM products WHERE name = $2::text)`,
+        [f.name, f.rename]
+      );
+    }
+  }
+
+  return `${comFoto} produtos receberam foto.`;
+}
+
+async function aplicarCargaUnica(pool) {
+  // As fotos dependem dos produtos: se a primeira carga falhar, a segunda espera
+  const ok = await executarUmaVez(pool, 'carga_unica_2026_10', cargaProdutos);
+  if (ok) await executarUmaVez(pool, 'carga_fotos_2026_10', cargaFotos);
 }
 
 module.exports = { aplicarCargaUnica };
