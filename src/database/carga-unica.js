@@ -45,6 +45,20 @@ async function executarUmaVez(pool, marca, aplicar) {
   }
 }
 
+// Garante a categoria e devolve o id. Se já houver uma com o mesmo nome (e
+// outro slug), usa essa.
+async function categoriaId(client, c) {
+  await client.query(
+    `INSERT INTO categories (name, slug, icon) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
+    [c.name, c.slug, c.icon]
+  );
+  const { rows } = await client.query(
+    `SELECT id FROM categories WHERE slug = $1::text OR name = $2::text ORDER BY (slug = $1::text) DESC LIMIT 1`,
+    [c.slug, c.name]
+  );
+  return rows[0].id;
+}
+
 // Out/2026 — produtos da planilha, link do Mercado Pago e prazo de entrega
 async function cargaProdutos(client) {
   for (const [key, value] of Object.entries(CONFIGURACOES)) {
@@ -56,17 +70,7 @@ async function cargaProdutos(client) {
   }
 
   const categoryIds = {};
-  for (const c of categorias) {
-    await client.query(
-      `INSERT INTO categories (name, slug, icon) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
-      [c.name, c.slug, c.icon]
-    );
-    const { rows } = await client.query(
-      `SELECT id FROM categories WHERE slug = $1::text OR name = $2::text ORDER BY (slug = $1::text) DESC LIMIT 1`,
-      [c.slug, c.name]
-    );
-    categoryIds[c.slug] = rows[0].id;
-  }
+  for (const c of categorias) categoryIds[c.slug] = await categoriaId(client, c);
 
   // created_at decrescente mantém a ordem do arquivo na listagem (ORDER BY created_at DESC)
   let inseridos = 0;
@@ -327,6 +331,33 @@ const cargaObra = (obra) => async (client) => {
   return `andamento da obra em ${obra.geral}% (${obra.atualizacao}), ${etapas} etapas atualizadas.`;
 };
 
+// Out/2026 — produtos pedidos depois da planilha
+const PRODUTOS_NOVOS = [
+  {
+    name: 'Amazon Echo Show 11 Grafite ÚLTIMA GERAÇÃO com Alexa+',
+    price: 1870,
+    categoria: { name: 'Eletrônicos', slug: 'eletronicos', icon: '📱' },
+    suppliers: [
+      { name: 'Mercado Livre', url: 'https://meli.la/28SNFZj' },
+      { name: 'Amazon', url: 'https://www.amazon.com.br/Novo-Echo-Show-11-Preto/dp/B0DYC2GV1Z/ref=sr_1_2?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=16MLUD3EJIKMH&dib=eyJ2IjoiMSJ9.v5CFvW5YqTpDki-kJYhqwi29UkcZOPXfU8Mhik5Fue3GjHj071QN20LucGBJIEps.wBLT-s__491E7-n6BT7atfGoeLSEYA8XsmM3NS4QG7M&dib_tag=se&keywords=Amazon%2BEcho%2BShow%2B11%2BGrafite%2B%C3%9ALTIMA%2BGERA%C3%87%C3%83O%2Bcom%2BAlexa%2B&qid=1792344577&sprefix=amazon%2Becho%2Bshow%2B11%2Bgrafite%2B%C3%BAltima%2Bgera%C3%A7%C3%A3o%2Bcom%2Balexa%2B%2Caps%2C244&sr=8-2&ufe=app_do%3Aamzn1.fos.38059ce3-943c-48af-9fc9-22d85542b02c&th=1' },
+    ],
+  },
+];
+
+async function cargaProdutosNovos(client) {
+  let inseridos = 0;
+  for (const p of PRODUTOS_NOVOS) {
+    const res = await client.query(
+      `INSERT INTO products (name, price, category_id, status, specs, suppliers)
+       SELECT $1::text, $2::numeric, $3::int, 'disponivel', '{}', $4::text
+       WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = $1::text)`,
+      [p.name, p.price, await categoriaId(client, p.categoria), JSON.stringify(p.suppliers)]
+    );
+    inseridos += res.rowCount;
+  }
+  return `${inseridos} produto(s) novo(s) na lista.`;
+}
+
 // Em ordem: cada carga parte do que a anterior deixou. Se uma falhar, as
 // seguintes esperam o próximo início.
 const CARGAS = [
@@ -337,6 +368,7 @@ const CARGAS = [
   ['fotos_extras_2026_10',       cargaFotosExtras],
   ['obra_2026_08',               cargaObra(OBRA_AGOSTO_2026)],
   ['obra_2026_09',               cargaObra(OBRA_SETEMBRO_2026)],
+  ['produto_echo_show_2026_10',  cargaProdutosNovos],
 ];
 
 async function aplicarCargaUnica(pool) {
