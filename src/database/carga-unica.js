@@ -277,8 +277,8 @@ async function cargaFotosExtras(client) {
   return `${ligadas} fotos ligadas a cards e opções.`;
 }
 
-// Out/2026 — andamento da obra conforme o portal da construtora (Agosto/2026)
-const OBRA = {
+// Andamento da obra conforme o portal da construtora, mês a mês
+const OBRA_AGOSTO_2026 = {
   geral: '89.17',
   atualizacao: 'Agosto/2026',
   etapas: {
@@ -292,8 +292,22 @@ const OBRA = {
   },
 };
 
-async function cargaObra(client) {
-  for (const [key, value] of [['construction_overall', OBRA.geral], ['construction_last_update', OBRA.atualizacao]]) {
+const OBRA_SETEMBRO_2026 = {
+  geral: '92.76',
+  atualizacao: 'Setembro/2026',
+  etapas: {
+    'Serviços Preliminares':  100,
+    'Fundação':               100,
+    'Estrutura':              99.01,
+    'Instalações':            89.09,
+    'Revestimentos Internos': 93.12,
+    'Revestimentos Externos': 86.47,
+    'Pintura':                75.06,
+  },
+};
+
+const cargaObra = (obra) => async (client) => {
+  for (const [key, value] of [['construction_overall', obra.geral], ['construction_last_update', obra.atualizacao]]) {
     await client.query(
       `INSERT INTO settings (key, value) VALUES ($1, $2)
        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP`,
@@ -302,7 +316,7 @@ async function cargaObra(client) {
   }
 
   let etapas = 0;
-  for (const [name, percentage] of Object.entries(OBRA.etapas)) {
+  for (const [name, percentage] of Object.entries(obra.etapas)) {
     const res = await client.query(
       `UPDATE construction_stages SET percentage = $2::numeric, updated_at = CURRENT_TIMESTAMP WHERE name = $1::text`,
       [name, percentage]
@@ -310,8 +324,8 @@ async function cargaObra(client) {
     etapas += res.rowCount;
   }
 
-  return `andamento da obra em ${OBRA.geral}% (${OBRA.atualizacao}), ${etapas} etapas atualizadas.`;
-}
+  return `andamento da obra em ${obra.geral}% (${obra.atualizacao}), ${etapas} etapas atualizadas.`;
+};
 
 // Em ordem: cada carga parte do que a anterior deixou. Se uma falhar, as
 // seguintes esperam o próximo início.
@@ -321,7 +335,8 @@ const CARGAS = [
   ['retirada_comprados_2026_10', cargaRetirada],
   ['agrupamento_2026_10',        cargaAgrupamento],
   ['fotos_extras_2026_10',       cargaFotosExtras],
-  ['obra_2026_08',               cargaObra],
+  ['obra_2026_08',               cargaObra(OBRA_AGOSTO_2026)],
+  ['obra_2026_09',               cargaObra(OBRA_SETEMBRO_2026)],
 ];
 
 async function aplicarCargaUnica(pool) {
