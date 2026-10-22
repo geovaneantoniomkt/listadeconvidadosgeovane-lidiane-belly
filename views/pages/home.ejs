@@ -208,8 +208,8 @@
 
     <!-- Etapas -->
     <% if (constructionStages && constructionStages.length > 0) { %>
-    <% const obraPhotos = constructionPhotos || []; %>
-    <div class="fade-in obra-details <%= obraPhotos.length > 0 ? 'obra-details-with-photos' : '' %>" style="background: white; border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
+    <% const obraMedia = constructionMedia || []; %>
+    <div class="fade-in obra-details <%= obraMedia.length > 0 ? 'obra-details-with-photos' : '' %>" style="background: white; border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
       <div>
         <h3 style="font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-5);">Detalhes por Etapa</h3>
         <div style="display: flex; flex-direction: column; gap: var(--space-4);">
@@ -227,22 +227,36 @@
         </div>
       </div>
 
-      <!-- Fotos da obra (carrossel automático) -->
-      <% if (obraPhotos.length > 0) { %>
-      <div class="obra-carousel" id="obraCarousel" role="group" aria-roledescription="carrossel" aria-label="Fotos da obra">
-        <% obraPhotos.forEach((photo, i) => { %>
-        <figure class="obra-slide <%= i === 0 ? 'active' : '' %>">
-          <%# só a primeira carrega de início; as demais entram conforme o carrossel avança %>
-          <img <%- i === 0 ? 'src' : 'data-src' %>="<%= photo.src %>" alt="Foto da obra em <%= photo.label %>">
-          <figcaption>📸 <%= photo.label %></figcaption>
+      <!-- Fotos e vídeos da obra (carrossel automático) -->
+      <% if (obraMedia.length > 0) { %>
+      <div class="obra-carousel" id="obraCarousel" role="group" aria-roledescription="carrossel" aria-label="Fotos e vídeos da obra">
+        <% obraMedia.forEach((item, i) => { %>
+        <%# só o primeiro carrega de início; os demais entram conforme o carrossel avança %>
+        <% const src = i === 0 ? 'src' : 'data-src'; %>
+        <% if (item.type === 'video') { %>
+        <figure class="obra-slide obra-slide-video <%= i === 0 ? 'active' : '' %>">
+          <% if (item.poster) { %>
+            <img class="obra-fundo" <%- src %>="<%= item.poster %>" alt="" aria-hidden="true">
+          <% } %>
+          <%# o vídeo em si só baixa quando o slide aparece na tela %>
+          <video class="obra-video" muted playsinline controls preload="none"
+                 data-src="<%= item.src %>" <% if (item.poster) { %><%- i === 0 ? 'poster' : 'data-poster' %>="<%= item.poster %>"<% } %>
+                 aria-label="Vídeo da obra em <%= item.label %>"></video>
+          <figcaption>🎬 <%= item.label %></figcaption>
         </figure>
+        <% } else { %>
+        <figure class="obra-slide <%= i === 0 ? 'active' : '' %>">
+          <img <%- src %>="<%= item.src %>" alt="Foto da obra em <%= item.label %>">
+          <figcaption>📸 <%= item.label %></figcaption>
+        </figure>
+        <% } %>
         <% }) %>
-        <% if (obraPhotos.length > 1) { %>
-        <button type="button" class="obra-nav obra-prev" aria-label="Foto anterior">‹</button>
-        <button type="button" class="obra-nav obra-next" aria-label="Próxima foto">›</button>
+        <% if (obraMedia.length > 1) { %>
+        <button type="button" class="obra-nav obra-prev" aria-label="Anterior">‹</button>
+        <button type="button" class="obra-nav obra-next" aria-label="Próximo">›</button>
         <div class="obra-dots">
-          <% obraPhotos.forEach((photo, i) => { %>
-          <button type="button" class="obra-dot <%= i === 0 ? 'active' : '' %>" aria-label="Ver foto de <%= photo.label %>"></button>
+          <% obraMedia.forEach((item, i) => { %>
+          <button type="button" class="obra-dot <%= i === 0 ? 'active' : '' %>" aria-label="Ver <%= item.type === 'video' ? 'vídeo' : 'foto' %> de <%= item.label %>"></button>
           <% }) %>
         </div>
         <% } %>
@@ -308,7 +322,7 @@
 })();
 </script>
 
-<!-- Script carrossel de fotos da obra -->
+<!-- Script carrossel de fotos e vídeos da obra -->
 <script>
 (function() {
   var root = document.getElementById('obraCarousel');
@@ -316,29 +330,70 @@
 
   var slides = root.querySelectorAll('.obra-slide');
   var dots = root.querySelectorAll('.obra-dot');
-  if (slides.length < 2) return;
 
   var INTERVALO = 4500;
   var atual = 0;
   var timer = null;
+  var visivel = !('IntersectionObserver' in window); // sem o observador, considera visível
   var semMovimento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  function video(i) { return slides[i].querySelector('video'); }
+
+  // Vídeo que está tocando segura o carrossel; se o navegador bloquear, vira "foto"
+  function seguraCarrossel(i) {
+    var v = video(i);
+    return !!v && !v.hasAttribute('data-bloqueado');
+  }
+
   function carregar(i) {
-    var img = slides[i].querySelector('img');
-    if (img.getAttribute('data-src')) {
-      img.src = img.getAttribute('data-src');
-      img.removeAttribute('data-src');
+    var imgs = slides[i].querySelectorAll('img[data-src]');
+    for (var k = 0; k < imgs.length; k++) {
+      imgs[k].src = imgs[k].getAttribute('data-src');
+      imgs[k].removeAttribute('data-src');
+    }
+    var v = video(i);
+    if (v && v.getAttribute('data-poster')) {
+      v.poster = v.getAttribute('data-poster');
+      v.removeAttribute('data-poster');
+    }
+  }
+
+  function pausarVideos() {
+    for (var k = 0; k < slides.length; k++) {
+      var v = video(k);
+      if (v && !v.paused) v.pause();
+    }
+  }
+
+  // Toca o vídeo do slide atual (sem som) só quando o carrossel está na tela
+  function tocarVideo() {
+    var v = video(atual);
+    if (!v || !visivel || document.hidden || semMovimento) return;
+    if (v.getAttribute('data-src')) {
+      v.src = v.getAttribute('data-src');
+      v.removeAttribute('data-src');
+    }
+    var tocando = v.play();
+    if (tocando && tocando.catch) {
+      tocando.catch(function() {
+        v.setAttribute('data-bloqueado', '');
+        iniciar();
+      });
     }
   }
 
   function mostrar(i) {
     atual = (i + slides.length) % slides.length;
     carregar(atual);
-    carregar((atual + 1) % slides.length); // já deixa a próxima pronta
+    carregar((atual + 1) % slides.length); // já deixa o próximo pronto
     for (var k = 0; k < slides.length; k++) {
       slides[k].classList.toggle('active', k === atual);
       if (dots[k]) dots[k].classList.toggle('active', k === atual);
     }
+    root.classList.toggle('obra-em-video', !!video(atual));
+    pausarVideos();
+    if (seguraCarrossel(atual)) parar(); // o vídeo avança sozinho quando termina
+    tocarVideo();
   }
 
   function parar() {
@@ -347,7 +402,7 @@
   }
 
   function iniciar() {
-    if (semMovimento || timer) return;
+    if (semMovimento || timer || slides.length < 2 || seguraCarrossel(atual)) return;
     timer = setInterval(function() { mostrar(atual + 1); }, INTERVALO);
   }
 
@@ -358,18 +413,36 @@
     iniciar();
   }
 
-  root.querySelector('.obra-prev').addEventListener('click', function() { ir(atual - 1); });
-  root.querySelector('.obra-next').addEventListener('click', function() { ir(atual + 1); });
-  for (var d = 0; d < dots.length; d++) {
-    (function(i) { dots[i].addEventListener('click', function() { ir(i); }); })(d);
+  if (slides.length > 1) {
+    root.querySelector('.obra-prev').addEventListener('click', function() { ir(atual - 1); });
+    root.querySelector('.obra-next').addEventListener('click', function() { ir(atual + 1); });
+    for (var d = 0; d < dots.length; d++) {
+      (function(i) { dots[i].addEventListener('click', function() { ir(i); }); })(d);
+    }
   }
 
-  // Pausa enquanto a pessoa olha a foto ou a aba está escondida
+  // Quando o vídeo termina, segue para o próximo
+  for (var s = 0; s < slides.length; s++) {
+    var v = video(s);
+    if (v && slides.length > 1) v.addEventListener('ended', function() { ir(atual + 1); });
+  }
+
+  // Pausa enquanto a pessoa olha a foto, o carrossel está fora da tela ou a aba está escondida
   root.addEventListener('mouseenter', parar);
   root.addEventListener('mouseleave', iniciar);
   root.addEventListener('focusin', parar);
   root.addEventListener('focusout', iniciar);
-  document.addEventListener('visibilitychange', function() { document.hidden ? parar() : iniciar(); });
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) { parar(); pausarVideos(); }
+    else { iniciar(); tocarVideo(); }
+  });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(entradas) {
+      visivel = entradas[0].isIntersecting;
+      if (visivel) tocarVideo();
+      else pausarVideos();
+    }, { threshold: 0.4 }).observe(root);
+  }
 
   // Arrastar com o dedo
   var toqueX = null;

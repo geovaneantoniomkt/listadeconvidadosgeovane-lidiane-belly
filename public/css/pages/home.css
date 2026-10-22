@@ -375,6 +375,31 @@
   display: block;
 }
 
+/* Vídeo (vertical): inteiro no centro, sobre a própria capa desfocada */
+.obra-slide-video {
+  background: #1f2a24;
+}
+
+.obra-slide-video .obra-fundo {
+  position: absolute;
+  inset: 0;
+  filter: blur(24px) brightness(0.8);
+  transform: scale(1.15);
+}
+
+.obra-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Os controles do vídeo ocupam a parte de baixo: os pontos saem da frente */
+.obra-em-video .obra-dots {
+  display: none;
+}
+
 .obra-slide figcaption {
   position: absolute;
   left: var(--space-3);
