@@ -358,6 +358,17 @@ async function cargaProdutosNovos(client) {
   return `${inseridos} produto(s) novo(s) na lista.`;
 }
 
+// Reserva pedida pela família (presente já combinado com um convidado).
+// Só mexe em produto disponível: comprado ou em validação fica como está.
+const reservar = (name) => async (client) => {
+  const res = await client.query(
+    `UPDATE products SET status = 'reservado', updated_at = CURRENT_TIMESTAMP
+     WHERE name = $1::text AND status = 'disponivel'`,
+    [name]
+  );
+  return res.rowCount ? `"${name}" reservado.` : `"${name}" não estava disponível; nada mudou.`;
+};
+
 // Em ordem: cada carga parte do que a anterior deixou. Se uma falhar, as
 // seguintes esperam o próximo início.
 const CARGAS = [
@@ -369,6 +380,7 @@ const CARGAS = [
   ['obra_2026_08',               cargaObra(OBRA_AGOSTO_2026)],
   ['obra_2026_09',               cargaObra(OBRA_SETEMBRO_2026)],
   ['produto_echo_show_2026_10',  cargaProdutosNovos],
+  ['reserva_aspirador_philco_2026_10', reservar('Aspirador Pó Philco Vertical Power Clean 2000W PAS4000V 127V')],
 ];
 
 async function aplicarCargaUnica(pool) {
