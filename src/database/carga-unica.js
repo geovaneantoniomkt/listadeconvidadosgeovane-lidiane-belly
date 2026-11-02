@@ -369,6 +369,19 @@ const reservar = (name) => async (client) => {
   return res.rowCount ? `"${name}" reservado.` : `"${name}" não estava disponível; nada mudou.`;
 };
 
+// Foto enviada pelo admin fica no disco do Render, que é apagado a cada
+// reinício no plano free: o card fica com a imagem quebrada. A foto do
+// repositório entra no lugar dela (ou no lugar de nenhuma foto).
+const fotoNoLugarDoUpload = (name, image) => async (client) => {
+  const res = await client.query(
+    `UPDATE products SET image_url = $2::text, updated_at = CURRENT_TIMESTAMP
+     WHERE name = $1::text
+       AND (image_url IS NULL OR image_url = '' OR image_url LIKE '%placeholder%' OR image_url LIKE '/uploads/%')`,
+    [name, image]
+  );
+  return res.rowCount ? `foto de "${name}" ligada.` : `"${name}" já tinha outra foto; nada mudou.`;
+};
+
 // Em ordem: cada carga parte do que a anterior deixou. Se uma falhar, as
 // seguintes esperam o próximo início.
 const CARGAS = [
@@ -381,6 +394,7 @@ const CARGAS = [
   ['obra_2026_09',               cargaObra(OBRA_SETEMBRO_2026)],
   ['produto_echo_show_2026_10',  cargaProdutosNovos],
   ['reserva_aspirador_philco_2026_10', reservar('Aspirador Pó Philco Vertical Power Clean 2000W PAS4000V 127V')],
+  ['foto_echo_show_2026_11',     fotoNoLugarDoUpload('Amazon Echo Show 11 Grafite ÚLTIMA GERAÇÃO com Alexa+', '/images/produtos/echo-show-11-grafite.webp')],
 ];
 
 async function aplicarCargaUnica(pool) {
