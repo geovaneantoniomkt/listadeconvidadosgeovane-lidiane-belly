@@ -168,6 +168,9 @@ async function initializeDatabase() {
     )
   `);
 
+  // Colunas novas em tabelas que já existem no ar
+  await pool.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS highlight TEXT`); // observação em destaque
+
   // Índices
   for (const sql of [
     `CREATE INDEX IF NOT EXISTS idx_products_status      ON products(status)`,

@@ -83,6 +83,14 @@
             </div>
 
             <div class="form-group">
+              <label class="form-label">Observação em destaque</label>
+              <input type="text" name="highlight" class="form-control" maxlength="80"
+                     value="<%= product && product.highlight ? product.highlight : '' %>"
+                     placeholder="Ex.: Panela de pressão de Indução">
+              <p class="form-hint">Aparece em destaque no card e na página do produto. Deixe em branco para não mostrar.</p>
+            </div>
+
+            <div class="form-group">
               <label class="form-label">Descrição curta</label>
               <textarea name="description" class="form-control" rows="2"
                         placeholder="Descrição objetiva do produto"><%= product ? product.description || '' : '' %></textarea>

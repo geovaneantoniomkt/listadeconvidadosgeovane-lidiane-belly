@@ -344,19 +344,35 @@ const PRODUTOS_NOVOS = [
   },
 ];
 
-async function cargaProdutosNovos(client) {
+// Nov/2026 — panela de pressão para o fogão de indução
+const PANELA_INDUCAO = [
+  {
+    name: 'Panela de Pressão Oster Bravada 4,5 Litros',
+    price: 359.10,
+    categoria: { name: 'Utensílios', slug: 'utensilios', icon: '🍳' },
+    highlight: 'Panela de pressão de Indução',
+    image: '/images/produtos/panela-de-pressao-oster-bravada-inducao.webp',
+    suppliers: [
+      { name: 'Amazon', url: 'https://www.amazon.com.br/OSTER-Panela-Press%C3%A3o-Litros-Bravada/dp/B0GP76LMWZ/ref=asc_df_B0GP76LMWZ?mcid=bb40ad159767325792d4c316ba27ce38&tag=googleshopp00-20&linkCode=df0&hvadid=796541962718&hvpos=&hvnetw=g&hvrand=15151882453737687997&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1001729&hvtargid=pla-2469972272053&psc=1&hvocijid=15151882453737687997-B0GP76LMWZ-&hvexpln=0&language=pt_BR' },
+      { name: 'Mercado Livre', url: 'https://meli.la/1rG9C1V' },
+    ],
+  },
+];
+
+// Não duplica: produto com o mesmo nome já na lista fica como está
+const inserirProdutos = (lista) => async (client) => {
   let inseridos = 0;
-  for (const p of PRODUTOS_NOVOS) {
+  for (const p of lista) {
     const res = await client.query(
-      `INSERT INTO products (name, price, category_id, status, specs, suppliers)
-       SELECT $1::text, $2::numeric, $3::int, 'disponivel', '{}', $4::text
+      `INSERT INTO products (name, price, category_id, status, specs, suppliers, image_url, highlight)
+       SELECT $1::text, $2::numeric, $3::int, 'disponivel', '{}', $4::text, $5::text, $6::text
        WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = $1::text)`,
-      [p.name, p.price, await categoriaId(client, p.categoria), JSON.stringify(p.suppliers)]
+      [p.name, p.price, await categoriaId(client, p.categoria), JSON.stringify(p.suppliers), p.image || null, p.highlight || null]
     );
     inseridos += res.rowCount;
   }
   return `${inseridos} produto(s) novo(s) na lista.`;
-}
+};
 
 // Reserva pedida pela família (presente já combinado com um convidado).
 // Só mexe em produto disponível: comprado ou em validação fica como está.
@@ -392,9 +408,10 @@ const CARGAS = [
   ['fotos_extras_2026_10',       cargaFotosExtras],
   ['obra_2026_08',               cargaObra(OBRA_AGOSTO_2026)],
   ['obra_2026_09',               cargaObra(OBRA_SETEMBRO_2026)],
-  ['produto_echo_show_2026_10',  cargaProdutosNovos],
+  ['produto_echo_show_2026_10',  inserirProdutos(PRODUTOS_NOVOS)],
   ['reserva_aspirador_philco_2026_10', reservar('Aspirador Pó Philco Vertical Power Clean 2000W PAS4000V 127V')],
   ['foto_echo_show_2026_11',     fotoNoLugarDoUpload('Amazon Echo Show 11 Grafite ÚLTIMA GERAÇÃO com Alexa+', '/images/produtos/echo-show-11-grafite.webp')],
+  ['produto_panela_inducao_2026_11', inserirProdutos(PANELA_INDUCAO)],
 ];
 
 async function aplicarCargaUnica(pool) {

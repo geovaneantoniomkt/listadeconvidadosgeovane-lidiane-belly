@@ -90,6 +90,14 @@
 
       <h1 class="product-info product-title"><%= product.name %></h1>
 
+      <!-- Observação em destaque -->
+      <% if (product.highlight) { %>
+      <div class="model-warning">
+        <div class="model-warning-icon">📌</div>
+        <div class="model-warning-text"><%= product.highlight %></div>
+      </div>
+      <% } %>
+
       <!-- Preço -->
       <div class="product-info product-price-block">
         <div>

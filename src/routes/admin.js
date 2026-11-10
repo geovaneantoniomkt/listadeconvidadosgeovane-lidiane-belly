@@ -160,14 +160,15 @@ function buildSuppliersJson(body) {
 router.post('/produtos', requireAuth, uploadProductImage.single('image'), async (req, res) => {
   try {
     const { name, description, creative_text, price, category_id, status, priority, badge, specs } = req.body;
+    const highlight = (req.body.highlight || '').trim() || null;
     const image_url = req.file ? `/uploads/products/${req.file.filename}` : '/images/placeholder-product.jpg';
     const suppliers = buildSuppliersJson(req.body);
 
     await db.run(
-      `INSERT INTO products (name, description, creative_text, price, category_id, status, priority, badge, image_url, specs, suppliers)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO products (name, description, creative_text, price, category_id, status, priority, badge, highlight, image_url, specs, suppliers)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [name, description, creative_text, parseFloat(price), category_id || null,
-       status || 'disponivel', priority ? 1 : 0, badge || null, image_url, specs || '{}', suppliers]
+       status || 'disponivel', priority ? 1 : 0, badge || null, highlight, image_url, specs || '{}', suppliers]
     );
     req.flash('success', 'Produto criado com sucesso!');
     res.redirect('/admin/produtos');
@@ -180,16 +181,17 @@ router.post('/produtos/:id', requireAuth, uploadProductImage.single('image'), as
     const product = await db.get('SELECT * FROM products WHERE id = ?', [req.params.id]);
     if (!product) { req.flash('error', 'Produto não encontrado.'); return res.redirect('/admin/produtos'); }
 
+    const highlight = (req.body.highlight || '').trim() || null;
     const image_url = req.file ? `/uploads/products/${req.file.filename}` : product.image_url;
     const suppliers = buildSuppliersJson(req.body);
 
     await db.run(
       `UPDATE products
        SET name=?, description=?, creative_text=?, price=?, category_id=?, status=?,
-           priority=?, badge=?, image_url=?, specs=?, suppliers=?, updated_at=CURRENT_TIMESTAMP
+           priority=?, badge=?, highlight=?, image_url=?, specs=?, suppliers=?, updated_at=CURRENT_TIMESTAMP
        WHERE id=?`,
       [name, description, creative_text, parseFloat(price), category_id || null,
-       status, priority ? 1 : 0, badge || null, image_url, specs || '{}', suppliers, req.params.id]
+       status, priority ? 1 : 0, badge || null, highlight, image_url, specs || '{}', suppliers, req.params.id]
     );
     req.flash('success', 'Produto atualizado!');
     res.redirect('/admin/produtos');
