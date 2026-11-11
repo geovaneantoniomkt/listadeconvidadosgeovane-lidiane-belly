@@ -310,6 +310,21 @@ const OBRA_SETEMBRO_2026 = {
   },
 };
 
+// Só o geral mudou no portal; as etapas estão iguais às de setembro
+const OBRA_OUTUBRO_2026 = {
+  geral: '94.2',
+  atualizacao: 'Outubro/2026',
+  etapas: {
+    'Serviços Preliminares':  100,
+    'Fundação':               100,
+    'Estrutura':              99.01,
+    'Instalações':            89.09,
+    'Revestimentos Internos': 93.12,
+    'Revestimentos Externos': 86.47,
+    'Pintura':                75.06,
+  },
+};
+
 const cargaObra = (obra) => async (client) => {
   for (const [key, value] of [['construction_overall', obra.geral], ['construction_last_update', obra.atualizacao]]) {
     await client.query(
@@ -412,6 +427,7 @@ const CARGAS = [
   ['reserva_aspirador_philco_2026_10', reservar('Aspirador Pó Philco Vertical Power Clean 2000W PAS4000V 127V')],
   ['foto_echo_show_2026_11',     fotoNoLugarDoUpload('Amazon Echo Show 11 Grafite ÚLTIMA GERAÇÃO com Alexa+', '/images/produtos/echo-show-11-grafite.webp')],
   ['produto_panela_inducao_2026_11', inserirProdutos(PANELA_INDUCAO)],
+  ['obra_2026_10',               cargaObra(OBRA_OUTUBRO_2026)],
 ];
 
 async function aplicarCargaUnica(pool) {
